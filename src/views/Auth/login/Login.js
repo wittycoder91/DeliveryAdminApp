@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -77,14 +77,6 @@ const Login = () => {
                     <CButton className="w-100 px-4 dark-blue" onClick={handleLogin}>
                       Login
                     </CButton>
-                  </CCol>
-                  <CCol className="w-100 mt-4 text-center">
-                    <p className="text-body-secondary">
-                      Don&#39;t have an account?
-                      <Link to="/register" className="text-decoration-none">
-                        <strong> Create an account</strong>
-                      </Link>
-                    </p>
                   </CCol>
                 </CForm>
               </CCardBody>
