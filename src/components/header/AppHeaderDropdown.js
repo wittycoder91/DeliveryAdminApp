@@ -9,9 +9,10 @@ import {
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
+  CBadge,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilLockLocked, cilUser } from '@coreui/icons'
+import { cilLockLocked, cilUser, cilBell } from '@coreui/icons'
 
 import avatar8 from './../../assets/images/avatars/avatar.jpg'
 
@@ -30,6 +31,14 @@ const AppHeaderDropdown = () => {
           <CAvatar src={avatar8} size="md" />
         </CDropdownToggle>
         <CDropdownMenu className="pt-0" placement="bottom-end">
+          <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">Account</CDropdownHeader>
+          <CDropdownItem href="/#/data/deliveryprocess">
+            <CIcon icon={cilBell} className="me-2" />
+            Notifications
+            <CBadge color="info" className="ms-2">
+              5
+            </CBadge>
+          </CDropdownItem>
           <CDropdownHeader className="bg-body-secondary fw-semibold my-2">Settings</CDropdownHeader>
           <CDropdownItem href="/#/setting/setting">
             <CIcon icon={cilUser} className="me-2" />

@@ -27,30 +27,34 @@ const Tables = () => {
   const tableHeaders = [
     'No',
     'Supplier',
+    'Scale Ticket',
     'Material',
+    'Weight',
+    'Packaging',
+    'The Total of packages',
+    'Residue Material',
+    'Color',
+    'Conditions',
     'Image',
-    'Description',
-    'Quality',
-    'Amount',
-    'Send Date',
-    'location',
+    'Date',
     'Status',
-    'Note',
     'Feedback',
   ]
 
   const tableData = Array.from({ length: 500 }, (_, index) => ({
     no: index + 1,
     supplier: `Supplier ${index + 1}`,
+    ticket: `Scale Ticket ${index + 1}`,
     material: `Material ${index + 1}`,
+    weight: `Weight ${index + 1}`,
+    packaging: `Packaging ${index + 1}`,
+    packagingCount: `The Total of packages ${index + 1}`,
+    residue: `Residue Material ${index + 1}`,
+    color: `Color ${index + 1}`,
+    conditions: `Conditions ${index + 1}`,
     image: `Image ${index + 1}`,
-    description: `Description ${index + 1}`,
-    quality: `Quality ${index + 1}`,
-    amount: (index + 1) * 10,
     sendDate: `2020-09-${String(index + 10).padStart(2, '0')}`,
-    location: `Location ${index + 1}`,
-    status: index % 2 === 0 ? 'Accepted' : 'Rejected',
-    note: `Note ${index + 1}`,
+    status: index % 2 === 0 ? 'Delivered' : 'Rejected',
     feedback: index % 2 === 0 ? 'Good' : 'Average',
   }))
 
@@ -172,13 +176,16 @@ const Tables = () => {
                       {startIndex + index + 1}
                     </CTableHeaderCell>
                     <CTableDataCell className="text-center">{row.supplier}</CTableDataCell>
+                    <CTableDataCell className="text-center">{row.ticket}</CTableDataCell>
                     <CTableDataCell className="text-center">{row.material}</CTableDataCell>
+                    <CTableDataCell className="text-center">{row.weight}</CTableDataCell>
+                    <CTableDataCell className="text-center">{row.packaging}</CTableDataCell>
+                    <CTableDataCell className="text-center">{row.packagingCount}</CTableDataCell>
+                    <CTableDataCell className="text-center">{row.residue}</CTableDataCell>
+                    <CTableDataCell className="text-center">{row.color}</CTableDataCell>
+                    <CTableDataCell className="text-center">{row.conditions}</CTableDataCell>
                     <CTableDataCell className="text-center">{row.image}</CTableDataCell>
-                    <CTableDataCell className="text-center">{row.description}</CTableDataCell>
-                    <CTableDataCell className="text-center">{row.quality}</CTableDataCell>
-                    <CTableDataCell className="text-center">{row.amount}</CTableDataCell>
                     <CTableDataCell className="text-center">{row.sendDate}</CTableDataCell>
-                    <CTableDataCell className="text-center">{row.location}</CTableDataCell>
                     <CTableDataCell className="text-center">
                       {row.status === 'Accepted' ? (
                         <span className="delivery-accept">{row.status}</span>
@@ -186,7 +193,6 @@ const Tables = () => {
                         <span className="delivery-reject">{row.status}</span>
                       )}
                     </CTableDataCell>
-                    <CTableDataCell className="text-center">{row.note}</CTableDataCell>
                     <CTableDataCell className="text-center">{row.feedback}</CTableDataCell>
                   </CTableRow>
                 ))}

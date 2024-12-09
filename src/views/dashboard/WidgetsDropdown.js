@@ -33,7 +33,7 @@ const WidgetsDropdown = (props) => {
           className="dashboard-widget"
           color="info"
           value={<>6,200</>}
-          title="Total Supplier"
+          title="Total Suppliers"
         />
       </CCol>
       <CCol sm={6} xl={4} xxl={3}>
@@ -41,7 +41,7 @@ const WidgetsDropdown = (props) => {
           className="dashboard-widget"
           color="info"
           value={<>1234</>}
-          title="Total Amount"
+          title="Total Weight"
         />
       </CCol>
       <CCol sm={6} xl={4} xxl={3}>
@@ -57,7 +57,7 @@ const WidgetsDropdown = (props) => {
           className="dashboard-widget"
           color="danger"
           value={<>4,014 </>}
-          title="Appeared"
+          title="Delivered"
         />
       </CCol>
     </CRow>

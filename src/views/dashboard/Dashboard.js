@@ -35,17 +35,17 @@ const Dashboard = () => {
             </CCardBody>
           </CCard>
         </CCol>
-        {/* Amount Chart */}
+        {/* Weight Chart */}
         <CCol xs={6}>
           <CCard className="mb-4">
-            <h3 className="px-4 pt-3">Amount Chart</h3>
+            <h3 className="px-4 pt-3">Weight Chart</h3>
             <CCardBody>
               <CChartLine
                 data={{
                   labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                   datasets: [
                     {
-                      label: 'Amount History',
+                      label: 'Weight History',
                       backgroundColor: 'rgba(151, 187, 205, 0.2)',
                       borderColor: 'rgba(151, 187, 205, 1)',
                       pointBackgroundColor: 'rgba(151, 187, 205, 1)',
@@ -65,7 +65,7 @@ const Dashboard = () => {
             <CCardBody>
               <CChartDoughnut
                 data={{
-                  labels: ['Total Delivery', 'Approved', 'Rejected', 'Pending'],
+                  labels: ['Delivered', 'Accepted', 'Rejected', 'Pending'],
                   datasets: [
                     {
                       backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],

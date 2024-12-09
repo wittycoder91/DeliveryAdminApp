@@ -19,11 +19,15 @@ const DeliverylogDetail = () => {
         <CCard className="mb-4">
           <h3 className="px-3 pt-3 mb-0">Delivery History Detail</h3>
           <CCardBody className="d-flex flex-column gap-2">
-            <CCol className="d-flex flex-column">
-              <CFormLabel>Supplier </CFormLabel>
+            <CCol>
+              <CFormLabel>Supplier</CFormLabel>
               <CFormInput placeholder="Supplier" />
             </CCol>
             <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
+              <CCol>
+                <CFormLabel>Scale Ticket</CFormLabel>
+                <CFormInput placeholder="Scale Ticket" />
+              </CCol>
               <CCol>
                 <CFormLabel>Material</CFormLabel>
                 <CFormSelect
@@ -33,9 +37,31 @@ const DeliverylogDetail = () => {
                   ]}
                 />
               </CCol>
+            </CCol>
+            <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
               <CCol>
-                <CFormLabel>Amount</CFormLabel>
-                <CFormInput placeholder="Amount" />
+                <CFormLabel>Weight(lbs)</CFormLabel>
+                <CFormInput placeholder="Weight(lbs)" />
+              </CCol>
+              <CCol>
+                <CFormLabel>Packaging</CFormLabel>
+                <CFormSelect
+                  options={[
+                    { label: 'Baled', value: 0 },
+                    { label: 'Stacked on Skids', value: 1 },
+                    { label: 'Loosed in Boxes', value: 2 },
+                  ]}
+                />
+              </CCol>
+            </CCol>
+            <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
+              <CCol>
+                <CFormLabel>The Total of packages</CFormLabel>
+                <CFormInput placeholder="The Total of packages" />
+              </CCol>
+              <CCol>
+                <CFormLabel>Residue Material</CFormLabel>
+                <CFormInput type="number" placeholder="Residue Material" />
               </CCol>
             </CCol>
             <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
@@ -44,33 +70,17 @@ const DeliverylogDetail = () => {
                 <CFormInput placeholder="Color" />
               </CCol>
               <CCol>
-                <CFormLabel>Quality</CFormLabel>
-                <CFormInput type="number" placeholder="Quality" />
+                <CFormLabel>Conditions</CFormLabel>
+                <CFormInput placeholder="Conditions" />
               </CCol>
             </CCol>
-            <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
-              <CCol>
-                <CFormLabel>Location</CFormLabel>
-                <CFormInput placeholder="Location" />
-              </CCol>
-              <CCol>
-                <CFormLabel>Note</CFormLabel>
-                <CFormInput placeholder="Note" />
-              </CCol>
-            </CCol>
-            <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
-              <CCol className="d-flex flex-column">
-                <CFormLabel>Description</CFormLabel>
-                <CFormTextarea className="h-100"></CFormTextarea>
-              </CCol>
-              <CCol className="d-flex flex-column">
-                <CFormLabel>Image</CFormLabel>
-                <img
-                  src="./images/login_back.png"
-                  alt="Logo Preview"
-                  style={{ maxWidth: '100%', maxHeight: '150px', borderRadius: '5px' }}
-                />
-              </CCol>
+            <CCol className="d-flex flex-column">
+              <CFormLabel>Image</CFormLabel>
+              <img
+                src="./images/login_back.png"
+                alt="Logo Preview"
+                style={{ maxWidth: '100%', maxHeight: '150px', borderRadius: '5px' }}
+              />
             </CCol>
             <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
               <CCol>
@@ -79,7 +89,7 @@ const DeliverylogDetail = () => {
               </CCol>
               <CCol className="d-flex flex-column">
                 <CFormLabel>Status</CFormLabel>
-                <CFormLabel className="delivery-accept w-max">Accepted</CFormLabel>
+                <CFormLabel className="delivery-accept w-max">Delivered</CFormLabel>
               </CCol>
             </CCol>
             <CCol className="d-flex flex-column">

@@ -24,7 +24,7 @@ const Profile = () => {
   return (
     <CCol xs={12}>
       <CCard className="mb-4">
-        <h3 className="px-3 pt-3 mb-0">Setting</h3>
+        <h3 className="px-3 pt-3 mb-0">Schedule Time</h3>
         <CCardBody>
           <CForm className="row g-3">
             <CCol md={6}>

@@ -10,9 +10,11 @@ import {
   CHeaderNav,
   CHeaderToggler,
   useColorModes,
+  CNavItem,
+  CNavLink,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilMenu, cilMoon, cilSun } from '@coreui/icons'
+import { cilMenu, cilMoon, cilSun, cilBell } from '@coreui/icons'
 
 import { AppHeaderDropdown } from './header/index'
 
@@ -39,6 +41,14 @@ const AppHeader = () => {
         >
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
+        <CHeaderNav className="ms-auto">
+          <CNavItem>
+            <CNavLink href="/#/data/deliveryprocess" className="position-relative">
+              <CIcon icon={cilBell} size="lg" />
+              <span className="badge bg-danger rounded-pill position-absolute top-0 end-0">5</span>
+            </CNavLink>
+          </CNavItem>
+        </CHeaderNav>
         <CHeaderNav>
           <CDropdown variant="nav-item" placement="bottom-end">
             <CDropdownToggle caret={false}>

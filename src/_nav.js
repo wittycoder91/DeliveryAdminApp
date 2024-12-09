@@ -24,12 +24,6 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Materials',
-    to: '/data/materials',
-    icon: <CIcon icon={cilLayers} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
     name: 'Delivery Process',
     to: '/data/deliveryprocess',
     icon: <CIcon icon={cilBabyCarriage} customClassName="nav-icon" />,
@@ -49,6 +43,12 @@ const _nav = [
   {
     component: CNavTitle,
     name: 'Settings',
+  },
+  {
+    component: CNavItem,
+    name: 'Materials',
+    to: '/setting/materials',
+    icon: <CIcon icon={cilLayers} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
