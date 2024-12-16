@@ -43,7 +43,7 @@ const WidgetsDropdown = (props) => {
       const response = await api.get(API_URLS.GETDASHBOARDWIDGET)
 
       if (response.data.success && response.data.data) {
-        setCurTotalWeight(response.data.data?.totalWeight)
+        setCurTotalWeight(parseFloat(response.data.data?.totalWeight).toFixed(2))
         setCurTotalSupplier(response.data.data?.totalSupplier)
         setCurWaiting(response.data.data?.totalWaiting)
         setCurAccepted(response.data.data?.totalAccepted)
