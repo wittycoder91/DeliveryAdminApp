@@ -10,11 +10,20 @@ import {
   CDropdownToggle,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import { useNavigate } from 'react-router-dom'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 
 import avatar from './../../assets/images/avatars/avatar.jpg'
 
 const AppHeaderDropdown = () => {
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    localStorage.clear()
+
+    navigate('/login')
+  }
+
   return (
     <CCol className="d-flex">
       <CDropdown variant="nav-item">
@@ -28,7 +37,7 @@ const AppHeaderDropdown = () => {
             Setting
           </CDropdownItem>
           <CDropdownDivider />
-          <CDropdownItem href="#/login">
+          <CDropdownItem href="#/login" onClick={handleLogout}>
             <CIcon icon={cilLockLocked} className="me-2" />
             Log out
           </CDropdownItem>
