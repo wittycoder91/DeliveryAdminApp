@@ -9,8 +9,8 @@ const AppContent = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!localStorage.getItem('login')) {
-      navigate('/login', { replace: true }) // Use navigate instead of window.location.href
+    if (!localStorage.getItem('token')) {
+      navigate('/login', { replace: true })
     }
   }, [navigate]) // Ensure the useEffect runs only once when the component mounts
 
@@ -31,7 +31,8 @@ const AppContent = () => {
               )
             )
           })}
-          <Route path="/" element={<Navigate to="dashboard" replace />} />
+          {/* <Route path="/" element={<Navigate to="dashboard" replace />} /> */}
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Suspense>
     </CCol>

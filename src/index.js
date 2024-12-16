@@ -6,10 +6,13 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { Provider } from 'react-redux'
 import store from './store'
+import NotificationProvider from './components/header/NotificationProvider'
 
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
-    <App />
+    <NotificationProvider>
+      <App />
+    </NotificationProvider>
   </Provider>,
 )
 

@@ -1,12 +1,20 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
-
-import { CRow, CCol, CWidgetStatsA } from '@coreui/react'
 import { getStyle } from '@coreui/utils'
+import { CRow, CCol, CWidgetStatsA } from '@coreui/react'
+import { CChartBar, CChartLine } from '@coreui/react-chartjs'
+
+import api from 'src/services'
+import { API_URLS } from 'src/config/Constants'
+import { showWarningMsg, showErrorMsg } from 'src/config/common'
 
 const WidgetsDropdown = (props) => {
   const widgetChartRef1 = useRef(null)
   const widgetChartRef2 = useRef(null)
+  const [curTotalSupplier, setCurTotalSupplier] = useState(0)
+  const [curTotalWeight, setCurTotalWeight] = useState(0)
+  const [curWaiting, setCurWaiting] = useState(0)
+  const [curAccepted, setCurAccepted] = useState(0)
 
   useEffect(() => {
     document.documentElement.addEventListener('ColorSchemeChange', () => {
@@ -26,38 +34,296 @@ const WidgetsDropdown = (props) => {
     })
   }, [widgetChartRef1, widgetChartRef2])
 
+  useEffect(() => {
+    getInformation()
+  }, [])
+
+  const getInformation = async () => {
+    try {
+      const response = await api.get(API_URLS.GETDASHBOARDWIDGET)
+
+      if (response.data.success && response.data.data) {
+        setCurTotalWeight(response.data.data?.totalWeight)
+        setCurTotalSupplier(response.data.data?.totalSupplier)
+        setCurWaiting(response.data.data?.totalWaiting)
+        setCurAccepted(response.data.data?.totalAccepted)
+      } else {
+        showWarningMsg(response.data.message)
+      }
+    } catch (error) {
+      if (error.response.data.msg) {
+        showErrorMsg(error.response.data.msg)
+      } else {
+        showErrorMsg(error.message)
+      }
+    }
+  }
+
   return (
-    <CRow className={props.className}>
+    <CRow className={props.className} xs={{ gutter: 4 }}>
       <CCol sm={6} xl={4} xxl={3}>
         <CWidgetStatsA
-          className="dashboard-widget"
-          color="info"
-          value={<>6,200</>}
-          title="Total Suppliers"
+          color="primary"
+          value={curTotalSupplier}
+          title="Total Supplier"
+          chart={
+            <CChartLine
+              ref={widgetChartRef1}
+              className="mt-3 mx-3"
+              style={{ height: '70px' }}
+              data={{
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                datasets: [
+                  {
+                    label: 'My First dataset',
+                    backgroundColor: 'transparent',
+                    borderColor: 'rgba(255,255,255,.55)',
+                    pointBackgroundColor: getStyle('--cui-primary'),
+                    data: [65, 59, 84, 84, 51, 55, 40],
+                  },
+                ],
+              }}
+              options={{
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+                maintainAspectRatio: false,
+                scales: {
+                  x: {
+                    border: {
+                      display: false,
+                    },
+                    grid: {
+                      display: false,
+                      drawBorder: false,
+                    },
+                    ticks: {
+                      display: false,
+                    },
+                  },
+                  y: {
+                    min: 30,
+                    max: 89,
+                    display: false,
+                    grid: {
+                      display: false,
+                    },
+                    ticks: {
+                      display: false,
+                    },
+                  },
+                },
+                elements: {
+                  line: {
+                    borderWidth: 1,
+                    tension: 0.4,
+                  },
+                  point: {
+                    radius: 4,
+                    hitRadius: 10,
+                    hoverRadius: 4,
+                  },
+                },
+              }}
+            />
+          }
         />
       </CCol>
       <CCol sm={6} xl={4} xxl={3}>
         <CWidgetStatsA
-          className="dashboard-widget"
           color="info"
-          value={<>1234</>}
+          value={curTotalWeight + ' LBS'}
           title="Total Weight"
+          chart={
+            <CChartLine
+              ref={widgetChartRef2}
+              className="mt-3 mx-3"
+              style={{ height: '70px' }}
+              data={{
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                datasets: [
+                  {
+                    label: 'My First dataset',
+                    backgroundColor: 'transparent',
+                    borderColor: 'rgba(255,255,255,.55)',
+                    pointBackgroundColor: getStyle('--cui-info'),
+                    data: [1, 18, 9, 17, 34, 22, 11],
+                  },
+                ],
+              }}
+              options={{
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+                maintainAspectRatio: false,
+                scales: {
+                  x: {
+                    border: {
+                      display: false,
+                    },
+                    grid: {
+                      display: false,
+                      drawBorder: false,
+                    },
+                    ticks: {
+                      display: false,
+                    },
+                  },
+                  y: {
+                    min: -9,
+                    max: 39,
+                    display: false,
+                    grid: {
+                      display: false,
+                    },
+                    ticks: {
+                      display: false,
+                    },
+                  },
+                },
+                elements: {
+                  line: {
+                    borderWidth: 1,
+                  },
+                  point: {
+                    radius: 4,
+                    hitRadius: 10,
+                    hoverRadius: 4,
+                  },
+                },
+              }}
+            />
+          }
         />
       </CCol>
       <CCol sm={6} xl={4} xxl={3}>
         <CWidgetStatsA
-          className="dashboard-widget"
           color="warning"
-          value={<>32</>}
-          title="Pending"
+          value={curWaiting}
+          title={'Waiting'}
+          chart={
+            <CChartLine
+              className="mt-3"
+              style={{ height: '70px' }}
+              data={{
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                datasets: [
+                  {
+                    label: 'My First dataset',
+                    backgroundColor: 'rgba(255,255,255,.2)',
+                    borderColor: 'rgba(255,255,255,.55)',
+                    data: [78, 81, 80, 45, 34, 12, 40],
+                    fill: true,
+                  },
+                ],
+              }}
+              options={{
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+                maintainAspectRatio: false,
+                scales: {
+                  x: {
+                    display: false,
+                  },
+                  y: {
+                    display: false,
+                  },
+                },
+                elements: {
+                  line: {
+                    borderWidth: 2,
+                    tension: 0.4,
+                  },
+                  point: {
+                    radius: 0,
+                    hitRadius: 10,
+                    hoverRadius: 4,
+                  },
+                },
+              }}
+            />
+          }
         />
       </CCol>
       <CCol sm={6} xl={4} xxl={3}>
         <CWidgetStatsA
-          className="dashboard-widget"
           color="danger"
-          value={<>4,014 </>}
-          title="Delivered"
+          value={curAccepted}
+          title="Accepted"
+          chart={
+            <CChartBar
+              className="mt-3 mx-3"
+              style={{ height: '70px' }}
+              data={{
+                labels: [
+                  'January',
+                  'February',
+                  'March',
+                  'April',
+                  'May',
+                  'June',
+                  'July',
+                  'August',
+                  'September',
+                  'October',
+                  'November',
+                  'December',
+                  'January',
+                  'February',
+                  'March',
+                  'April',
+                ],
+                datasets: [
+                  {
+                    label: 'My First dataset',
+                    backgroundColor: 'rgba(255,255,255,.2)',
+                    borderColor: 'rgba(255,255,255,.55)',
+                    data: [78, 81, 80, 45, 34, 12, 40, 85, 65, 23, 12, 98, 34, 84, 67, 82],
+                    barPercentage: 0.6,
+                  },
+                ],
+              }}
+              options={{
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+                scales: {
+                  x: {
+                    grid: {
+                      display: false,
+                      drawTicks: false,
+                    },
+                    ticks: {
+                      display: false,
+                    },
+                  },
+                  y: {
+                    border: {
+                      display: false,
+                    },
+                    grid: {
+                      display: false,
+                      drawBorder: false,
+                      drawTicks: false,
+                    },
+                    ticks: {
+                      display: false,
+                    },
+                  },
+                },
+              }}
+            />
+          }
         />
       </CCol>
     </CRow>

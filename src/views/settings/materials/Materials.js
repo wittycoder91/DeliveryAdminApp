@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   CCard,
   CCardBody,
@@ -27,42 +27,89 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilPencil, cilSearch, cilXCircle } from '@coreui/icons'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
+import api from 'src/services'
+import { API_URLS } from 'src/config/Constants'
+import { showSuccessMsg, showWarningMsg, showErrorMsg } from 'src/config/common'
 
 const Materials = () => {
   const tableHeaders = ['No', 'Material Name', 'Description', 'Note', 'Action']
 
-  const tableData = Array.from({ length: 30 }, (_, index) => ({
-    no: index + 1,
-    product: `Material ${index + 1}`,
-    description: `Description ${index + 1}`,
-    note: `Note ${index + 1}`,
-  }))
-
   const [visible, setVisible] = useState(false)
   const [visibleDel, setVisibleDel] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(10) // Default rows per page
-  const totalPages = Math.ceil(tableData.length / itemsPerPage)
-  // Calculate the data for the current page
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const currentTableData = tableData.slice(startIndex, startIndex + itemsPerPage)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+
+  const [curSearh, setCurSearch] = useState('')
+  const [curData, setCurData] = useState([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [selId, setSelId] = useState('')
+
+  // Material Dialog States
+  const [curMaterialName, setCurMaterialName] = useState('')
+  const [curMaterialDesc, setCurMaterialDesc] = useState('')
+  const [curMaterialNote, setCurMaterialNote] = useState('')
+
+  useEffect(() => {
+    getMaterials(curSearh, itemsPerPage, currentPage)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const getMaterials = async (curSearh, itemsPerPage, currentPage) => {
+    try {
+      const response = await api.get(API_URLS.GETMATERIAL, {
+        params: {
+          curSearh: curSearh,
+          itemsPerPage: itemsPerPage,
+          currentPage: currentPage,
+        },
+      })
+
+      if (response.data.success) {
+        setCurData(response.data.data)
+        setTotalCount(response.data.totalCount)
+      } else {
+        showWarningMsg(response.data.message)
+      }
+    } catch (error) {
+      if (error.response.data.msg) {
+        showErrorMsg(error.response.data.msg)
+      } else {
+        showErrorMsg(error.message)
+      }
+    }
+  }
+
+  const handleSearch = () => {
+    setCurrentPage(1)
+
+    getMaterials(curSearh, itemsPerPage, 1)
+  }
 
   // Handle the Table pagination
   const handlePageChange = (page) => {
     setCurrentPage(page)
+
+    getMaterials(curSearh, itemsPerPage, page)
   }
   const handleItemsPerPageChange = (event) => {
     const newItemsPerPage = parseInt(event.target.value, 10)
     setItemsPerPage(newItemsPerPage)
     setCurrentPage(1)
+
+    getMaterials(curSearh, newItemsPerPage, 1)
   }
   const getPaginationItems = () => {
+    const totalPageCount = Math.ceil(totalCount / itemsPerPage)
     const pages = []
     const maxVisiblePages = 3
     const delta = 1
 
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
+    if (totalPageCount <= maxVisiblePages) {
+      for (let i = 1; i <= totalPageCount; i++) {
         pages.push(i)
       }
     } else {
@@ -73,19 +120,106 @@ const Materials = () => {
       }
 
       const start = Math.max(2, currentPage - delta)
-      const end = Math.min(totalPages - 1, currentPage + delta)
+      const end = Math.min(totalPageCount - 1, currentPage + delta)
       for (let i = start; i <= end; i++) {
         pages.push(i)
       }
 
-      if (currentPage < totalPages - (delta + 1)) {
+      if (currentPage < totalPageCount - (delta + 1)) {
         pages.push('...')
       }
 
-      pages.push(totalPages)
+      pages.push(totalPageCount)
     }
 
     return pages
+  }
+
+  const handleAdd = () => {
+    setSelId('')
+    setCurMaterialName('')
+    setCurMaterialDesc('')
+    setCurMaterialNote('')
+
+    setVisible(!visible)
+  }
+  const handleAddMaterial = async () => {
+    if (curMaterialName.length === 0 || curMaterialDesc.length === 0) {
+      showErrorMsg('Please enter the Material name or description')
+    } else {
+      var apiURL = ''
+      if (selId.length > 0) apiURL = API_URLS.EDITMATERIAL
+      else apiURL = API_URLS.ADDMATERIAL
+
+      try {
+        const response = await api.post(apiURL, {
+          selID: selId,
+          materialName: curMaterialName,
+          materialDesc: curMaterialDesc,
+          note: curMaterialNote,
+        })
+
+        if (response.data.success) {
+          showSuccessMsg(response.data.message)
+          setVisible(false)
+
+          setCurrentPage(1)
+          getMaterials(curSearh, itemsPerPage, 1)
+        } else {
+          showWarningMsg(response.data.message)
+        }
+      } catch (error) {
+        if (error.response.data.msg) {
+          showErrorMsg(error.response.data.msg)
+        } else {
+          showErrorMsg(error.message)
+        }
+      }
+    }
+  }
+  const handleSelEditMaterial = (selId) => {
+    setVisible(!visible)
+    setSelId('')
+
+    const selectedItem = curData.find((item) => item._id === selId)
+    if (selectedItem) {
+      setSelId(selectedItem?._id)
+      setCurMaterialName(selectedItem?.materialName)
+      setCurMaterialDesc(selectedItem?.materialDesc)
+      setCurMaterialNote(selectedItem?.note)
+    }
+  }
+  const handleSelDelMaterial = (selId) => {
+    setVisibleDel(!visibleDel)
+    setSelId('')
+
+    const selectedItem = curData.find((item) => item._id === selId)
+    if (selectedItem) {
+      setSelId(selectedItem?._id)
+    }
+  }
+  const handleSelRemove = async () => {
+    try {
+      const response = await api.post(API_URLS.REMOVEMATERIAL, {
+        selID: selId,
+      })
+
+      if (response.data.success) {
+        showSuccessMsg(response.data.message)
+        setVisibleDel(false)
+
+        setCurrentPage(1)
+        getMaterials(curSearh, itemsPerPage, 1)
+      } else {
+        showWarningMsg(response.data.message)
+      }
+    } catch (error) {
+      if (error.response.data.msg) {
+        showErrorMsg(error.response.data.msg)
+      } else {
+        showErrorMsg(error.message)
+      }
+    }
   }
 
   return (
@@ -95,11 +229,7 @@ const Materials = () => {
         <CCardBody>
           {/* Table */}
           <CCol className="mb-3">
-            <CButton
-              color="primary"
-              className="wid-100 dark-blue"
-              onClick={() => setVisible(!visible)}
-            >
+            <CButton color="primary" className="wid-100 dark-blue" onClick={handleAdd}>
               Add
             </CButton>
           </CCol>
@@ -110,12 +240,14 @@ const Materials = () => {
               </CInputGroupText>
               <CFormInput
                 placeholder="Search Index"
-                aria-label="Search Index"
-                aria-describedby="addon-wrapping"
                 className="w-max"
+                value={curSearh}
+                onChange={(e) => setCurSearch(e.target.value)}
               />
             </CInputGroup>
-            <CButton color="primary dark-blue">Search</CButton>
+            <CButton color="primary dark-blue" onClick={handleSearch}>
+              Search
+            </CButton>
           </CCol>
           <CCol className="table-responsive">
             <CTable>
@@ -129,26 +261,34 @@ const Materials = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody>
-                {currentTableData.map((row, index) => (
-                  <CTableRow key={index}>
-                    <CTableHeaderCell className="text-center" scope="row">
-                      {startIndex + index + 1}
-                    </CTableHeaderCell>
-                    <CTableDataCell className="text-center">{row.product}</CTableDataCell>
-                    <CTableDataCell className="text-center">{row.description}</CTableDataCell>
-                    <CTableDataCell className="text-center">{row.note}</CTableDataCell>
-                    <CTableDataCell>
-                      <CCol className="d-flex justify-content-center align-items-center">
-                        <CButton>
-                          <CIcon icon={cilPencil} onClick={() => setVisible(!visible)} />
-                        </CButton>
-                        <CButton>
-                          <CIcon icon={cilXCircle} onClick={() => setVisibleDel(!visibleDel)} />
-                        </CButton>
-                      </CCol>
+                {curData?.length > 0 ? (
+                  curData.map((row, index) => (
+                    <CTableRow key={index}>
+                      <CTableHeaderCell className="text-center" scope="row">
+                        {(currentPage - 1) * itemsPerPage + index + 1}
+                      </CTableHeaderCell>
+                      <CTableDataCell className="text-center">{row?.materialName}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row?.materialDesc}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row?.note}</CTableDataCell>
+                      <CTableDataCell>
+                        <CCol className="d-flex justify-content-center align-items-center">
+                          <CButton onClick={() => handleSelEditMaterial(row?._id)}>
+                            <CIcon icon={cilPencil} />
+                          </CButton>
+                          <CButton onClick={() => handleSelDelMaterial(row?._id)}>
+                            <CIcon icon={cilXCircle} />
+                          </CButton>
+                        </CCol>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan={5} className="text-center">
+                      There is no result
                     </CTableDataCell>
                   </CTableRow>
-                ))}
+                )}
               </CTableBody>
             </CTable>
           </CCol>
@@ -201,7 +341,7 @@ const Materials = () => {
 
                 {/* Next Button */}
                 <CPaginationItem
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage === Math.ceil(totalCount / itemsPerPage)}
                   onClick={() => handlePageChange(currentPage + 1)}
                 >
                   &raquo;
@@ -225,22 +365,34 @@ const Materials = () => {
         <CModalBody className="d-flex flex-column gap-2">
           <CCol>
             <CFormLabel>Material Name</CFormLabel>
-            <CFormInput placeholder="Material Name" />
+            <CFormInput
+              placeholder="Material Name"
+              value={curMaterialName}
+              onChange={(e) => setCurMaterialName(e.target.value)}
+            />
           </CCol>
           <CCol>
             <CFormLabel>Description</CFormLabel>
-            <CFormTextarea rows={3}></CFormTextarea>
+            <CFormTextarea
+              rows={3}
+              value={curMaterialDesc}
+              onChange={(e) => setCurMaterialDesc(e.target.value)}
+            ></CFormTextarea>
           </CCol>
           <CCol>
             <CFormLabel>Note</CFormLabel>
-            <CFormInput placeholder="Note" />
+            <CFormInput
+              placeholder="Note"
+              value={curMaterialNote}
+              onChange={(e) => setCurMaterialNote(e.target.value)}
+            />
           </CCol>
         </CModalBody>
         <CModalFooter>
           <CButton color="secondary" onClick={() => setVisible(false)}>
             Close
           </CButton>
-          <CButton color="primary" onClick={() => setVisible(false)}>
+          <CButton color="primary" onClick={handleAddMaterial}>
             Save changes
           </CButton>
         </CModalFooter>
@@ -260,11 +412,23 @@ const Materials = () => {
           <CButton color="secondary" onClick={() => setVisibleDel(false)}>
             Cancel
           </CButton>
-          <CButton color="primary" onClick={() => setVisibleDel(false)}>
+          <CButton color="primary" onClick={handleSelRemove}>
             Confirm
           </CButton>
         </CModalFooter>
       </CModal>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </CCol>
   )
 }

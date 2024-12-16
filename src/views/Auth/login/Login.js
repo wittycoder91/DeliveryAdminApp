@@ -13,32 +13,35 @@ import {
   CInputGroupText,
   CRow,
 } from '@coreui/react'
+import axios from 'axios'
 import CIcon from '@coreui/icons-react'
-import { Bounce, ToastContainer, toast } from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { cilLockLocked, cilUser } from '@coreui/icons'
+
+import { API_URLS } from 'src/config/Constants'
+import { showWarningMsg, showErrorMsg } from 'src/config/common'
 
 const Login = () => {
   const navigate = useNavigate()
   const [curUserId, setCurUserId] = useState('')
   const [curPassword, setCurPassword] = useState('')
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (curUserId.length === 0 || curPassword.length === 0) {
-      toast.warn('Please enter both username and password', {
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'light',
-        transition: Bounce,
-      })
+      showWarningMsg('Please enter both username and password')
     } else {
-      navigate(`/dashboard`)
-      localStorage.setItem('login', 'success')
+      const response = await axios.post(API_URLS.LOGIN, {
+        userId: curUserId,
+        password: curPassword,
+      })
+
+      if (response.data.success) {
+        navigate(`/dashboard`)
+        localStorage.setItem('token', response.data.token)
+      } else {
+        showErrorMsg(response.data.message)
+      }
     }
   }
 

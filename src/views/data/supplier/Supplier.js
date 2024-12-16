@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   CCard,
   CCardBody,
@@ -22,48 +22,100 @@ import {
   CModalTitle,
   CModalBody,
   CModalFooter,
-  CFormLabel,
   CFormCheck,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPencil, cilSearch, cilXCircle } from '@coreui/icons'
+import { cilSearch, cilXCircle } from '@coreui/icons'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
+import api from 'src/services'
+import { API_URLS } from 'src/config/Constants'
+import { showSuccessMsg, showWarningMsg, showErrorMsg } from 'src/config/common'
 
 const Supplier = () => {
-  const tableHeaders = ['No', 'Supplier', 'Email', 'Loyalty', 'Trust', 'Action']
+  const tableHeaders = [
+    'No',
+    'Supplier',
+    'Address',
+    'City',
+    'State',
+    'Zip Code',
+    'Email',
+    'Loyalty',
+    'Trust',
+    'Action',
+  ]
 
-  const tableData = Array.from({ length: 45 }, (_, index) => ({
-    no: index + 1,
-    supplier: `Supplier ${index + 1}`,
-    email: `Email ${index + 1}`,
-    loyalty: index % 2 === 0 ? 'Golden' : 'Silver',
-    trust: index % 2 === 0 ? 'Checked' : 'UnChecked',
-  }))
-
-  const [visible, setVisible] = useState(false)
   const [visibleDel, setVisibleDel] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(10) // Default rows per page
-  const totalPages = Math.ceil(tableData.length / itemsPerPage)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+
+  const [curSearh, setCurSearch] = useState('')
+  const [curData, setCurData] = useState([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [selId, setSelId] = useState('')
+
   // Calculate the data for the current page
   const startIndex = (currentPage - 1) * itemsPerPage
-  const currentTableData = tableData.slice(startIndex, startIndex + itemsPerPage)
 
+  useEffect(() => {
+    getSuppliers(curSearh, itemsPerPage, currentPage)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const getSuppliers = async (curSearh, itemsPerPage, currentPage) => {
+    try {
+      const response = await api.get(API_URLS.GETSUPPLIER, {
+        params: {
+          curSearh: curSearh,
+          itemsPerPage: itemsPerPage,
+          currentPage: currentPage,
+        },
+      })
+
+      if (response.data.success) {
+        setCurData(response.data.data)
+        setTotalCount(response.data.totalCount)
+      } else {
+        showWarningMsg(response.data.message)
+      }
+    } catch (error) {
+      if (error.response.data.msg) {
+        showErrorMsg(error.response.data.msg)
+      } else {
+        showErrorMsg(error.message)
+      }
+    }
+  }
+
+  const handleSearch = () => {
+    setCurrentPage(1)
+
+    getSuppliers(curSearh, itemsPerPage, 1)
+  }
   // Handle the Table pagination
   const handlePageChange = (page) => {
     setCurrentPage(page)
+
+    getSuppliers(curSearh, itemsPerPage, page)
   }
   const handleItemsPerPageChange = (event) => {
     const newItemsPerPage = parseInt(event.target.value, 10)
     setItemsPerPage(newItemsPerPage)
     setCurrentPage(1)
+
+    getSuppliers(curSearh, newItemsPerPage, 1)
   }
   const getPaginationItems = () => {
+    const totalPageCount = Math.ceil(totalCount / itemsPerPage)
     const pages = []
     const maxVisiblePages = 3
     const delta = 1
 
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
+    if (totalPageCount <= maxVisiblePages) {
+      for (let i = 1; i <= totalPageCount; i++) {
         pages.push(i)
       }
     } else {
@@ -74,19 +126,77 @@ const Supplier = () => {
       }
 
       const start = Math.max(2, currentPage - delta)
-      const end = Math.min(totalPages - 1, currentPage + delta)
+      const end = Math.min(totalPageCount - 1, currentPage + delta)
       for (let i = start; i <= end; i++) {
         pages.push(i)
       }
 
-      if (currentPage < totalPages - (delta + 1)) {
+      if (currentPage < totalPageCount - (delta + 1)) {
         pages.push('...')
       }
 
-      pages.push(totalPages)
+      pages.push(totalPageCount)
     }
 
     return pages
+  }
+
+  const handleEditSupplier = async (e, selId) => {
+    const checkedStatus = e.target.checked
+
+    try {
+      const response = await api.post(API_URLS.EDITSUPPLIER, {
+        selID: selId,
+        trust: checkedStatus ? 1 : 0,
+      })
+
+      if (response.data.success) {
+        showSuccessMsg(response.data.message)
+
+        setCurrentPage(1)
+        getSuppliers(curSearh, itemsPerPage, 1)
+      } else {
+        showWarningMsg(response.data.message)
+      }
+    } catch (error) {
+      if (error.response.data.msg) {
+        showErrorMsg(error.response.data.msg)
+      } else {
+        showErrorMsg(error.message)
+      }
+    }
+  }
+  const handleSelDelSupplier = (selId) => {
+    setVisibleDel(!visibleDel)
+    setSelId('')
+
+    const selectedItem = curData.find((item) => item._id === selId)
+    if (selectedItem) {
+      setSelId(selectedItem?._id)
+    }
+  }
+  const handleSelRemove = async () => {
+    try {
+      const response = await api.post(API_URLS.REMOVESUPPLIER, {
+        selID: selId,
+      })
+
+      if (response.data.success) {
+        showSuccessMsg(response.data.message)
+        setVisibleDel(false)
+
+        setCurrentPage(1)
+        getSuppliers(curSearh, itemsPerPage, 1)
+      } else {
+        showWarningMsg(response.data.message)
+      }
+    } catch (error) {
+      if (error.response.data.msg) {
+        showErrorMsg(error.response.data.msg)
+      } else {
+        showErrorMsg(error.message)
+      }
+    }
   }
 
   return (
@@ -102,12 +212,14 @@ const Supplier = () => {
               </CInputGroupText>
               <CFormInput
                 placeholder="Search Index"
-                aria-label="Search Index"
-                aria-describedby="addon-wrapping"
                 className="w-max"
+                value={curSearh}
+                onChange={(e) => setCurSearch(e.target.value)}
               />
             </CInputGroup>
-            <CButton color="primary dark-blue">Search</CButton>
+            <CButton color="primary dark-blue" onClick={handleSearch}>
+              Search
+            </CButton>
           </CCol>
           <CCol className="table-responsive">
             <CTable>
@@ -121,27 +233,50 @@ const Supplier = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody>
-                {currentTableData.map((row, index) => (
-                  <CTableRow key={index}>
-                    <CTableHeaderCell className="text-center" scope="row">
-                      {startIndex + index + 1}
-                    </CTableHeaderCell>
-                    <CTableDataCell className="text-center">{row.supplier}</CTableDataCell>
-                    <CTableDataCell className="text-center">{row.email}</CTableDataCell>
-                    <CTableDataCell className="text-center">{row.loyalty}</CTableDataCell>
-                    <CTableDataCell className="text-center">{row.trust}</CTableDataCell>
-                    <CTableDataCell>
-                      <CCol className="d-flex justify-content-center align-items-center">
-                        <CButton>
-                          <CIcon icon={cilPencil} onClick={() => setVisible(!visible)} />
-                        </CButton>
-                        <CButton>
-                          <CIcon icon={cilXCircle} onClick={() => setVisibleDel(!visibleDel)} />
-                        </CButton>
-                      </CCol>
+                {curData?.length > 0 ? (
+                  curData.map((row, index) => (
+                    <CTableRow key={index}>
+                      <CTableHeaderCell className="text-center" scope="row">
+                        {startIndex + index + 1}
+                      </CTableHeaderCell>
+                      <CTableDataCell className="text-center">{row.name}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row.address}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row.city}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row.state}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row.zipcode}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row.email}</CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {row.loyalty === 3
+                          ? 'Golden'
+                          : row.loyalty === 2
+                            ? 'Silver'
+                            : row.loyalty === 1
+                              ? 'Bronze'
+                              : ''}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        <CFormCheck
+                          label=""
+                          checked={row.trust ? true : false}
+                          onChange={(e) => handleEditSupplier(e, row._id)}
+                        />
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CCol className="d-flex justify-content-center align-items-center">
+                          <CButton onClick={() => handleSelDelSupplier(row?._id)}>
+                            <CIcon icon={cilXCircle} />
+                          </CButton>
+                        </CCol>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan={10} className="text-center">
+                      There is no result
                     </CTableDataCell>
                   </CTableRow>
-                ))}
+                )}
               </CTableBody>
             </CTable>
           </CCol>
@@ -194,7 +329,7 @@ const Supplier = () => {
 
                 {/* Next Button */}
                 <CPaginationItem
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage === Math.ceil(totalCount / itemsPerPage)}
                   onClick={() => handlePageChange(currentPage + 1)}
                 >
                   &raquo;
@@ -204,39 +339,6 @@ const Supplier = () => {
           </CRow>
         </CCardBody>
       </CCard>
-      {/* Add Modal */}
-      <CModal
-        alignment="center"
-        scrollable
-        visible={visible}
-        onClose={() => setVisible(false)}
-        aria-labelledby="VerticallyCenteredScrollableExample2"
-      >
-        <CModalHeader>
-          <CModalTitle id="VerticallyCenteredScrollableExample2">Supplier Information</CModalTitle>
-        </CModalHeader>
-        <CModalBody className="d-flex flex-column gap-3">
-          <CCol className="d-flex flex-row align-items-center gap-3">
-            <CFormLabel className="wid-100 text-end">Supplier</CFormLabel>
-            <CFormInput placeholder="Supplier" />
-          </CCol>
-          <CCol className="d-flex flex-row align-items-center gap-3">
-            <CFormLabel className="wid-100 text-end">Email</CFormLabel>
-            <CFormInput placeholder="Email" />
-          </CCol>
-          <CCol className="d-flex flex-row align-items-center justify-content-center gap-3">
-            <CFormCheck label="Trust" />
-          </CCol>
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => setVisible(false)}>
-            Close
-          </CButton>
-          <CButton color="primary" onClick={() => setVisible(false)}>
-            Confirm
-          </CButton>
-        </CModalFooter>
-      </CModal>
       {/* Remove Modal */}
       <CModal
         alignment="center"
@@ -245,16 +347,30 @@ const Supplier = () => {
         aria-labelledby="VerticallyCenteredExample"
       >
         <CModalHeader>
-          <CModalTitle id="VerticallyCenteredExample">Delivery Remove</CModalTitle>
+          <CModalTitle id="VerticallyCenteredExample">Supplier Remove</CModalTitle>
         </CModalHeader>
-        <CModalBody>Do you want to remove delivery information</CModalBody>
+        <CModalBody>Do you want to remove supplier information</CModalBody>
         <CModalFooter>
           <CButton color="secondary" onClick={() => setVisibleDel(false)}>
             Cancel
           </CButton>
-          <CButton color="primary">Confirm</CButton>
+          <CButton color="primary" onClick={handleSelRemove}>
+            Confirm
+          </CButton>
         </CModalFooter>
       </CModal>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </CCol>
   )
 }
