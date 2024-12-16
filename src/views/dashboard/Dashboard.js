@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { CCard, CCardBody, CCol, CRow } from '@coreui/react'
-import { CChartBar, CChartDoughnut, CChartLine, CChartPie } from '@coreui/react-chartjs'
+import { CChartBar, CChartLine, CChartPie } from '@coreui/react-chartjs'
 
 import api from 'src/services'
 import WidgetsDropdown from './WidgetsDropdown'
