@@ -25,7 +25,7 @@ import {
   CFormCheck,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilSearch, cilXCircle } from '@coreui/icons'
+import { cilSearch, cilXCircle, cilHandshake } from '@coreui/icons'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -35,8 +35,10 @@ import { showSuccessMsg, showWarningMsg, showErrorMsg } from 'src/config/common'
 
 const Supplier = () => {
   const tableHeaders = [
+    '',
     'No',
     'Supplier',
+    'Total Weight',
     'Address',
     'City',
     'State',
@@ -236,23 +238,29 @@ const Supplier = () => {
                 {curData?.length > 0 ? (
                   curData.map((row, index) => (
                     <CTableRow key={index}>
+                      <CTableDataCell className="text-center">
+                        {row.trust ? <CIcon icon={cilHandshake} className="me-2" /> : <></>}
+                      </CTableDataCell>
                       <CTableHeaderCell className="text-center" scope="row">
                         {startIndex + index + 1}
                       </CTableHeaderCell>
                       <CTableDataCell className="text-center">{row.name}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row.totalweight}</CTableDataCell>
                       <CTableDataCell className="text-center">{row.address}</CTableDataCell>
                       <CTableDataCell className="text-center">{row.city}</CTableDataCell>
                       <CTableDataCell className="text-center">{row.state}</CTableDataCell>
                       <CTableDataCell className="text-center">{row.zipcode}</CTableDataCell>
                       <CTableDataCell className="text-center">{row.email}</CTableDataCell>
                       <CTableDataCell className="text-center">
-                        {row.loyalty === 3
-                          ? 'Golden'
-                          : row.loyalty === 2
-                            ? 'Silver'
-                            : row.loyalty === 1
-                              ? 'Bronze'
-                              : ''}
+                        {row.loyalty === 3 ? (
+                          <img src="/icons/gold.png" alt="" width={42} height={50} />
+                        ) : row.loyalty === 2 ? (
+                          <img src="/icons/silver.png" alt="" width={42} height={50} />
+                        ) : row.loyalty === 1 ? (
+                          <img src="/icons/bronz.png" alt="" width={42} height={50} />
+                        ) : (
+                          <></>
+                        )}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
                         <CFormCheck

@@ -16,6 +16,7 @@ export const API_URLS = {
   GETALLMATERIALS: `${process.env.REACT_APP_API_URL}/setting/admin/get-allmaterials`,
   GETALLUSERS: `${process.env.REACT_APP_API_URL}/setting/admin/get-allusers`,
   GETALLPACKAGES: `${process.env.REACT_APP_API_URL}/setting/admin/get-allpackages`,
+  GETALLQUALITYS: `${process.env.REACT_APP_API_URL}/setting/admin/get-qualitys`,
   // FAG
   GETFAQ: `${process.env.REACT_APP_API_URL}/setting/admin/get-faq`,
   ADDFAQ: `${process.env.REACT_APP_API_URL}/setting/admin/add-faq`,
@@ -31,6 +32,7 @@ export const API_URLS = {
   GETSELDELIVERY: `${process.env.REACT_APP_API_URL}/delivery/admin/get-sel-delivery`,
   UPDATESELDELIVERY: `${process.env.REACT_APP_API_URL}/delivery/admin/update-sel-delivery`,
   ADDFEEDBACKDELIVERY: `${process.env.REACT_APP_API_URL}/delivery/admin/add-feedback-delivery`,
+  ADDREJECTDELIVERY: `${process.env.REACT_APP_API_URL}/delivery/admin/add-reject-delivery`,
   // Delivery Logs
   GETAllDELIVERYLOGS: `${process.env.REACT_APP_API_URL}/delivery/admin/get-all-deliverylogs`,
   GETSELDELIVERYLOG: `${process.env.REACT_APP_API_URL}/delivery/admin/get-sel-deliverylog`,

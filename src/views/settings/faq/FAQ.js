@@ -212,7 +212,7 @@ const FAQ = () => {
         <CCardBody>
           {/* Table */}
           <CCol className="d-flex justify-content-end mb-3 me-4">
-            <CButton color="primary" className="wid-100 dark-blue" onClick={handleAdd}>
+            <CButton color="primary" className="wid-110 dark-blue" onClick={handleAdd}>
               Add
             </CButton>
           </CCol>

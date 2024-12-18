@@ -229,7 +229,7 @@ const Materials = () => {
         <CCardBody>
           {/* Table */}
           <CCol className="mb-3">
-            <CButton color="primary" className="wid-100 dark-blue" onClick={handleAdd}>
+            <CButton color="primary" className="wid-110 dark-blue" onClick={handleAdd}>
               Add
             </CButton>
           </CCol>

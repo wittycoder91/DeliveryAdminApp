@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { CCard, CCardBody, CCol, CFormInput, CFormLabel, CFormTextarea, CRow } from '@coreui/react'
+import {
+  CCard,
+  CCardBody,
+  CCol,
+  CFormInput,
+  CFormLabel,
+  CFormTextarea,
+  CRow,
+  CCarousel,
+  CCarouselItem,
+  CImage,
+} from '@coreui/react'
 import { useParams } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -20,12 +31,18 @@ const DeliverylogDetail = () => {
   const [curResidue, setCurResidue] = useState('')
   const [curColor, setCurColor] = useState('')
   const [curCondition, setCurCondition] = useState('')
-  const [curLogoPreview, setCurLogoPreview] = useState('')
+  const [curDeliveryPreview, setCurDeliveryPreview] = useState('')
   const [curDate, setCurDate] = useState('')
   const [curTime, setCurTime] = useState('')
   const [curPO, setCurPO] = useState('')
   const [curStatus, setCurStatus] = useState(-1)
   const [curFeedback, setCurFeedback] = useState('')
+  const [curTareWeight, setCurTareWeight] = useState('')
+  const [curNetWeight, setCurNetWeight] = useState('')
+  const [curQuality, setCurQuality] = useState('')
+  const [curInspection, setCurInspection] = useState('')
+  const [curFeebackImage, setCurFeebackImage] = useState('')
+  const [curRejectImages, setCurRejectImages] = useState([])
 
   useEffect(() => {
     getSelDelivery()
@@ -52,12 +69,31 @@ const DeliverylogDetail = () => {
         setCurColor(response.data.data?.color)
         setCurResidue(response.data.data?.residue)
         setCurCondition(response.data.data?.condition)
-        setCurLogoPreview(response.data.data?.avatarPath)
+        setCurDeliveryPreview(response.data.data?.avatarPath)
         setCurDate(response.data.data?.date)
         setCurTime(new Date(response.data.data?.time * 1000).toISOString().substr(11, 8))
         setCurPO(response.data.data?.po)
         setCurStatus(response.data.data?.status)
         setCurFeedback(response.data.data?.feedback)
+        if (response.data.data?.tareamount) setCurTareWeight(response.data.data?.tareamount)
+        if (response.data.data?.netamount) setCurNetWeight(response.data.data?.netamount)
+        if (response.data.data?.quality) setCurQuality(response.data.data?.quality)
+        if (response.data.data?.insepction) setCurInspection(response.data.data?.insepction)
+        if (response.data.data?.feedbackImage) {
+          const rawAvatarPath = response.data.data?.feedbackImage
+          const normalizedAvatarPath = rawAvatarPath.replace(/\\/g, '/')
+          setCurFeebackImage(normalizedAvatarPath)
+        }
+        if (response.data.data?.rejectImages && response.data.data?.rejectImages?.length > 0) {
+          let tempRejectImages = []
+          for (let i = 0; i < response.data.data?.rejectImages.length; i++) {
+            const rawRejectImage = response.data.data?.rejectImages[i]
+            const rawRejectImagePath = rawRejectImage.replace(/\\/g, '/')
+            tempRejectImages.push(rawRejectImagePath)
+          }
+
+          setCurRejectImages(tempRejectImages)
+        }
       } else {
         showWarningMsg(response.data.message)
       }
@@ -78,12 +114,19 @@ const DeliverylogDetail = () => {
     setCurResidue('')
     setCurColor('')
     setCurCondition('')
-    setCurLogoPreview('')
+    setCurDeliveryPreview('')
     setCurDate('')
     setCurTime('')
     setCurPO('')
     setCurStatus(-1)
     setCurFeedback('')
+    setCurTareWeight('')
+    setCurNetWeight('')
+    setCurQuality('')
+    setCurInspection('')
+    setCurFeedback('')
+    setCurFeebackImage('')
+    setCurRejectImages([])
   }
 
   return (
@@ -152,19 +195,73 @@ const DeliverylogDetail = () => {
                 <CFormInput value={curPO > 0 ? curPO : ''} readOnly />
               </CCol>
             </CCol>
+            {curStatus === 3 && (
+              <>
+                <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
+                  <CCol>
+                    <CFormLabel>Tare Weight</CFormLabel>
+                    <CFormInput value={curTareWeight} readOnly />
+                  </CCol>
+                  <CCol>
+                    <CFormLabel>Net Weight</CFormLabel>
+                    <CFormInput value={curNetWeight} readOnly />
+                  </CCol>
+                </CCol>
+                <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
+                  <CCol>
+                    <CFormLabel>Inspection Results</CFormLabel>
+                    <CFormInput value={curInspection} readOnly />
+                  </CCol>
+                  <CCol>
+                    <CFormLabel>Quality grade</CFormLabel>
+                    <CFormInput value={curQuality} readOnly />
+                  </CCol>
+                </CCol>
+              </>
+            )}
             <CCol>
               <CFormLabel>Feedback</CFormLabel>
               <CFormTextarea value={curFeedback} readOnly />
             </CCol>
-            {curLogoPreview && (
-              <div className="mb-4 text-center">
-                <p className="text-body-secondary">Delivery Uploaded Image:</p>
-                <img
-                  src={`${process.env.REACT_APP_UPLOAD_URL}${curLogoPreview}`}
-                  alt="Logo Preview"
-                  style={{ maxWidth: '100%', maxHeight: '150px', borderRadius: '5px' }}
-                />
-              </div>
+            <CCol className="d-flex align-items-center justify-content-center flex-wrap flex-md-row flex-column gap-4">
+              {curDeliveryPreview && (
+                <div className="text-center">
+                  <p className="text-body-secondary">Delivery Uploaded Image:</p>
+                  <img
+                    src={`${process.env.REACT_APP_UPLOAD_URL}${curDeliveryPreview}`}
+                    alt="Delivery"
+                    style={{ maxWidth: '100%', maxHeight: '150px', borderRadius: '5px' }}
+                  />
+                </div>
+              )}
+              {curFeebackImage && (
+                <div className="text-center">
+                  <p className="text-body-secondary">Delivery Feedback Image:</p>
+                  <img
+                    src={`${process.env.REACT_APP_UPLOAD_URL}${curFeebackImage}`}
+                    alt="Delivery"
+                    style={{ maxWidth: '100%', maxHeight: '150px', borderRadius: '5px' }}
+                  />
+                </div>
+              )}
+            </CCol>
+            {curRejectImages.length > 0 && (
+              <CCol className="mb-4">
+                <div className="text-center">
+                  <p className="text-body-secondary m-0 mb-2">Delivery Reject Feedback Image:</p>
+                  <CCarousel controls indicators dark>
+                    {curRejectImages.map((image, index) => (
+                      <CCarouselItem key={index}>
+                        <CImage
+                          className="d-block w-100 image-slider"
+                          src={`${process.env.REACT_APP_UPLOAD_URL}${image}`}
+                          alt={`Uploaded slide ${index + 1}`}
+                        />
+                      </CCarouselItem>
+                    ))}
+                  </CCarousel>
+                </div>
+              </CCol>
             )}
           </CCardBody>
         </CCard>

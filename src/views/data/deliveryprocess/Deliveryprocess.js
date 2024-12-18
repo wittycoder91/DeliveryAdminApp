@@ -40,7 +40,7 @@ const Deliveryprocess = () => {
     'Residue Material',
     'Color',
     'Conditions',
-    'Send Date',
+    'Proposed Delivery Date',
     'Time',
     'Status',
   ]
@@ -356,7 +356,7 @@ const Deliveryprocess = () => {
                         {row?.status === 0
                           ? 'Waiting'
                           : row?.status === 1
-                            ? 'Pending'
+                            ? 'Pending for receiving'
                             : row?.status === 2
                               ? 'Received'
                               : 'Accepted'}

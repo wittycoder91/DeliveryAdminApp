@@ -11,8 +11,8 @@ th {
 .w-max {
   width: max-content;
 }
-.wid-100 {
-  width: 100px;
+.wid-110 {
+  width: 110px;
 }
 
 .h-max {
@@ -81,4 +81,10 @@ th {
 
 .wizard-card-footer {
   display: none;
+}
+
+.image-slider {
+  max-height: 300px !important;
+  height: 300px !important;
+  object-fit: contain;
 }
