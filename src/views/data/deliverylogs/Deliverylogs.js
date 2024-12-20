@@ -47,7 +47,6 @@ const Tables = () => {
     'Status',
     'Quality grade',
     'Inspection',
-    'Feedback',
   ]
 
   const navigate = useNavigate()
@@ -346,7 +345,6 @@ const Tables = () => {
                       </CTableDataCell>
                       <CTableDataCell className="text-center">{row?.qualityName}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.insepction}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row?.feedback}</CTableDataCell>
                     </CTableRow>
                   ))
                 ) : (
