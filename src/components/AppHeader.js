@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useCookies } from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
 import {
   CContainer,
   CDropdown,
@@ -26,6 +27,8 @@ import { showWarningMsg, showErrorMsg } from 'src/config/common'
 const AppHeader = () => {
   const headerRef = useRef()
   const navigate = useNavigate()
+  const [, setCookie] = useCookies()
+
   const { newData, setNewData, notificationCount, setNotificationCount } = useNotification()
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
 
@@ -45,7 +48,11 @@ const AppHeader = () => {
 
       if (response.data.success) {
         setNotificationCount(0)
-        setNewData(0)
+        setNewData([])
+
+        setCookie('notification', 0)
+        setCookie('notificationdata', [])
+
         navigate('/data/deliveryprocess')
       } else {
         showWarningMsg(response.data.message)

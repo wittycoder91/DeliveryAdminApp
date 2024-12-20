@@ -8,6 +8,10 @@ import {
   cilLayers,
   cilNotes,
   cilApplications,
+  cilLocomotive,
+  cilSatelite,
+  cilSpreadsheet,
+  cilStorage,
 } from '@coreui/icons'
 import { CNavItem, CNavTitle } from '@coreui/react'
 
@@ -49,6 +53,30 @@ const _nav = [
     name: 'Materials',
     to: '/setting/materials',
     icon: <CIcon icon={cilLayers} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Industry',
+    to: '/setting/industry',
+    icon: <CIcon icon={cilLocomotive} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Color',
+    to: '/setting/color',
+    icon: <CIcon icon={cilSatelite} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Residue Materials',
+    to: '/setting/residue',
+    icon: <CIcon icon={cilSpreadsheet} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Conditions',
+    to: '/setting/condition',
+    icon: <CIcon icon={cilStorage} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,

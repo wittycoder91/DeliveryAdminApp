@@ -10,6 +10,7 @@ import {
   CCarousel,
   CCarouselItem,
   CImage,
+  CButton,
 } from '@coreui/react'
 import { useParams } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
@@ -41,9 +42,11 @@ const DeliverylogDetail = () => {
   const [curNetWeight, setCurNetWeight] = useState('')
   const [curQuality, setCurQuality] = useState('')
   const [curInspection, setCurInspection] = useState('')
+  const [curSDS, setCurSDS] = useState('')
   const [curFeebackImage, setCurFeebackImage] = useState('')
   const [curRejectImages, setCurRejectImages] = useState([])
 
+  console.log(curTareWeight)
   useEffect(() => {
     getSelDelivery()
 
@@ -75,10 +78,11 @@ const DeliverylogDetail = () => {
         setCurPO(response.data.data?.po)
         setCurStatus(response.data.data?.status)
         setCurFeedback(response.data.data?.feedback)
-        if (response.data.data?.tareamount) setCurTareWeight(response.data.data?.tareamount)
-        if (response.data.data?.netamount) setCurNetWeight(response.data.data?.netamount)
-        if (response.data.data?.quality) setCurQuality(response.data.data?.quality)
-        if (response.data.data?.insepction) setCurInspection(response.data.data?.insepction)
+        setCurTareWeight(response.data.data?.tareamount)
+        setCurNetWeight(response.data.data?.netamount)
+        setCurQuality(response.data.data?.quality)
+        setCurInspection(response.data.data?.insepction)
+        setCurSDS(response.data.data?.sdsPath)
         if (response.data.data?.feedbackImage) {
           const rawAvatarPath = response.data.data?.feedbackImage
           const normalizedAvatarPath = rawAvatarPath.replace(/\\/g, '/')
@@ -127,6 +131,31 @@ const DeliverylogDetail = () => {
     setCurFeedback('')
     setCurFeebackImage('')
     setCurRejectImages([])
+    setCurSDS('')
+  }
+
+  const handleDownload = async () => {
+    const fileUrl = `${process.env.REACT_APP_UPLOAD_URL}${curSDS.replace(/\\/g, '/')}`
+
+    try {
+      const response = await fetch(fileUrl)
+      if (!response.ok) {
+        throw new Error('Failed to fetch file')
+      }
+      const blob = await response.blob()
+      const blobUrl = URL.createObjectURL(blob)
+
+      const link = document.createElement('a')
+      link.href = blobUrl
+      link.download = curSDS.split('\\').pop()
+      document.body.appendChild(link)
+      link.click()
+
+      URL.revokeObjectURL(blobUrl)
+      document.body.removeChild(link)
+    } catch (error) {
+      console.error('Error downloading file:', error)
+    }
   }
 
   return (
@@ -261,6 +290,13 @@ const DeliverylogDetail = () => {
                     ))}
                   </CCarousel>
                 </div>
+              </CCol>
+            )}
+            {curSDS.length > 0 && (
+              <CCol className="d-flex justify-content-end gap-3 me-4">
+                <CButton color="primary" className="wid-110" onClick={handleDownload}>
+                  Download
+                </CButton>
               </CCol>
             )}
           </CCardBody>

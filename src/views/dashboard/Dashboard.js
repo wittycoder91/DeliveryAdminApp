@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { CCard, CCardBody, CCol, CRow } from '@coreui/react'
+import { CCard, CCardBody, CCol, CRow, CButtonGroup, CFormCheck } from '@coreui/react'
 import { CChartBar, CChartLine, CChartPie } from '@coreui/react-chartjs'
 
 import api from 'src/services'
@@ -11,13 +11,7 @@ import { showWarningMsg, showErrorMsg } from 'src/config/common'
 const Dashboard = () => {
   const [curDeliveryData, setDeliveryData] = useState({
     labels: [],
-    datasets: [
-      {
-        label: 'Delivery History',
-        backgroundColor: '#f87979',
-        data: [],
-      },
-    ],
+    datasets: [{ label: 'Delivery History', backgroundColor: '#f87979', data: [] }],
   })
   const [weightData, setWeightData] = useState({
     labels: [],
@@ -30,25 +24,27 @@ const Dashboard = () => {
     ],
   })
   const [loyaltyData, setLoyaltyData] = useState([0, 0, 0, 0])
+  const [selectedDeliveryOption, setSelectedDeliveryOption] = useState('year')
+  const [selectedWeightOption, setSelectedWeightOption] = useState('year')
 
   useEffect(() => {
-    getDeliveryData()
-    getWeightData()
+    getDeliveryData('year')
+    getWeightData('year')
     getLoyaltyData()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const getDeliveryData = async () => {
+  console.log(weightData)
+  console.log(curDeliveryData)
+  const getDeliveryData = async (view) => {
     try {
-      const response = await api.get(API_URLS.GETDASHBOARDDELIERY)
+      const response = await api.get(`${API_URLS.GETDASHBOARDDELIERY}?view=${view}`)
 
       if (response.data.success && response.data.data) {
         const chartData = response.data.data
 
-        // Process the data to populate the chart
         const updatedData = {
-          labels: chartData.map((item) => item.month),
+          labels: chartData.map((item) => item.period),
           datasets: [
             {
               label: 'Delivery History',
@@ -63,28 +59,24 @@ const Dashboard = () => {
         showWarningMsg(response.data.message)
       }
     } catch (error) {
-      if (error.response.data.msg) {
-        showErrorMsg(error.response.data.msg)
-      } else {
-        showErrorMsg(error.message)
-      }
+      showErrorMsg(error.response?.data?.msg || error.message)
     }
   }
-  const getWeightData = async () => {
+  const getWeightData = async (view) => {
     try {
-      const response = await api.get(API_URLS.GETDASHBOARDWEIGHT)
+      const response = await api.get(`${API_URLS.GETDASHBOARDWEIGHT}?view=${view}`)
 
       if (response.data.success && response.data.data) {
         const chartData = response.data.data
 
         // Process the data to populate the chart
         const updatedData = {
-          labels: chartData.map((item) => item.month),
+          labels: chartData.map((item) => item.period),
           datasets: [
             {
               label: 'Weight History',
               backgroundColor: '#79f879',
-              data: chartData.map((item) => item.totalWeight),
+              data: chartData.map((item) => item.count),
             },
           ],
         }
@@ -127,6 +119,17 @@ const Dashboard = () => {
     }
   }
 
+  const handleDeliveryOptions = (event) => {
+    const selectedValue = event.target.value
+    setSelectedDeliveryOption(selectedValue)
+    getDeliveryData(selectedValue)
+  }
+  const handleWeightOptions = (event) => {
+    const selectedValue = event.target.value
+    setSelectedWeightOption(selectedValue)
+    getWeightData(selectedValue)
+  }
+
   return (
     <CCol className="d-flex flex-column gap-3">
       <CCard className="p-4 gap-2">
@@ -137,15 +140,83 @@ const Dashboard = () => {
         {/* Delivery Chart */}
         <CCol md={6}>
           <CCard className="mb-4">
+            <CCol className="d-flex justify-content-center align-items-center mt-3">
+              <CButtonGroup role="group" aria-label="Delivery range group" className="w-max">
+                <CFormCheck
+                  type="radio"
+                  button={{ color: 'primary', variant: 'outline' }}
+                  name="delivery-group"
+                  id="range1"
+                  label="Month"
+                  value="month"
+                  checked={selectedDeliveryOption === 'month'}
+                  onChange={handleDeliveryOptions}
+                />
+                <CFormCheck
+                  type="radio"
+                  button={{ color: 'primary', variant: 'outline' }}
+                  name="delivery-group"
+                  id="range2"
+                  label="Quarter"
+                  value="quarter"
+                  checked={selectedDeliveryOption === 'quarter'}
+                  onChange={handleDeliveryOptions}
+                />
+                <CFormCheck
+                  type="radio"
+                  button={{ color: 'primary', variant: 'outline' }}
+                  name="delivery-group"
+                  id="range3"
+                  label="Year"
+                  value="year"
+                  checked={selectedDeliveryOption === 'year'}
+                  onChange={handleDeliveryOptions}
+                />
+              </CButtonGroup>
+            </CCol>
             <h3 className="px-4 pt-3">Delivery Chart</h3>
             <CCardBody>
-              <CChartBar data={curDeliveryData} labels="months" />
+              <CChartBar data={curDeliveryData} labels="periods" />
             </CCardBody>
           </CCard>
         </CCol>
         {/* Weight Chart */}
         <CCol md={6}>
           <CCard className="mb-4">
+            <CCol className="d-flex justify-content-center align-items-center mt-3">
+              <CButtonGroup role="group" aria-label="Delivery range group" className="w-max">
+                <CFormCheck
+                  type="radio"
+                  button={{ color: 'primary', variant: 'outline' }}
+                  name="weight-group"
+                  id="weight1"
+                  label="Month"
+                  value="month"
+                  checked={selectedWeightOption === 'month'}
+                  onChange={handleWeightOptions}
+                />
+                <CFormCheck
+                  type="radio"
+                  button={{ color: 'primary', variant: 'outline' }}
+                  name="weight-group"
+                  id="weight2"
+                  label="Quarter"
+                  value="quarter"
+                  checked={selectedWeightOption === 'quarter'}
+                  onChange={handleWeightOptions}
+                />
+                <CFormCheck
+                  type="radio"
+                  button={{ color: 'primary', variant: 'outline' }}
+                  name="weight-group"
+                  id="weight3"
+                  label="Year"
+                  value="year"
+                  checked={selectedWeightOption === 'year'}
+                  onChange={handleWeightOptions}
+                />
+              </CButtonGroup>
+            </CCol>
             <h3 className="px-4 pt-3">Weight Chart</h3>
             <CCardBody>
               <CChartLine data={weightData} labels="months" />
@@ -163,8 +234,8 @@ const Dashboard = () => {
                   datasets: [
                     {
                       data: loyaltyData,
-                      backgroundColor: ['#E46651', '#FFCE56', '#36A2EB', '#FF6384'],
-                      hoverBackgroundColor: ['#E46651', '#FFCE56', '#36A2EB', '#FF6384'],
+                      backgroundColor: ['#E46651', '#FFCE56', '#36A2EB', '#5856d6'],
+                      hoverBackgroundColor: ['#E46651', '#FFCE56', '#36A2EB', '#5856d6'],
                     },
                   ],
                 }}

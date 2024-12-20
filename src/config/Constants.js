@@ -10,6 +10,26 @@ export const API_URLS = {
   ADDMATERIAL: `${process.env.REACT_APP_API_URL}/setting/admin/add-material`,
   EDITMATERIAL: `${process.env.REACT_APP_API_URL}/setting/admin/edit-material`,
   REMOVEMATERIAL: `${process.env.REACT_APP_API_URL}/setting/admin/remove-material`,
+  // Industry
+  GETINDUSTRY: `${process.env.REACT_APP_API_URL}/setting/admin/get-industry`,
+  ADDINDUSTRY: `${process.env.REACT_APP_API_URL}/setting/admin/add-industry`,
+  EDITINDUSTRY: `${process.env.REACT_APP_API_URL}/setting/admin/edit-industry`,
+  REMOVEINDUSTRY: `${process.env.REACT_APP_API_URL}/setting/admin/remove-industry`,
+  // Color
+  GETCOLOR: `${process.env.REACT_APP_API_URL}/setting/admin/get-color`,
+  ADDCOLOR: `${process.env.REACT_APP_API_URL}/setting/admin/add-color`,
+  EDITCOLOR: `${process.env.REACT_APP_API_URL}/setting/admin/edit-color`,
+  REMOVECOLOR: `${process.env.REACT_APP_API_URL}/setting/admin/remove-color`,
+  // Residue Materials
+  GETRESIDUE: `${process.env.REACT_APP_API_URL}/setting/admin/get-residue-material`,
+  ADDRESIDUE: `${process.env.REACT_APP_API_URL}/setting/admin/add-residue-material`,
+  EDITRESIDUE: `${process.env.REACT_APP_API_URL}/setting/admin/edit-residue-material`,
+  REMOVERESIDUE: `${process.env.REACT_APP_API_URL}/setting/admin/remove-residue-material`,
+  // Conditions
+  GETCONDITION: `${process.env.REACT_APP_API_URL}/setting/admin/get-condition`,
+  ADDCONDITION: `${process.env.REACT_APP_API_URL}/setting/admin/add-condition`,
+  EDITCONDITION: `${process.env.REACT_APP_API_URL}/setting/admin/edit-condition`,
+  REMOVECONDITION: `${process.env.REACT_APP_API_URL}/setting/admin/remove-condition`,
   // Setting
   GETSETTING: `${process.env.REACT_APP_API_URL}/setting/admin/get-setting`,
   UPDATESETTING: `${process.env.REACT_APP_API_URL}/setting/admin/update-setting`,

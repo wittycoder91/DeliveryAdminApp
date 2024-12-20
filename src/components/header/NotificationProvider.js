@@ -1,4 +1,5 @@
-import React, { useState, useEffect, createContext, useContext } from 'react'
+import { useCookies } from 'react-cookie'
+import React, { useState, useEffect, createContext, useContext, useRef } from 'react'
 import PropTypes from 'prop-types' // Import PropTypes
 
 // Create a Context for Notifications
@@ -9,8 +10,33 @@ export const useNotification = () => {
 }
 
 const NotificationProvider = ({ children }) => {
+  const [cookies, setCookie] = useCookies()
   const [notificationCount, setNotificationCount] = useState(0)
+  const notificationCountRef = useRef(notificationCount)
   const [newData, setNewData] = useState([])
+  const newDataRef = useRef(newData)
+
+  useEffect(() => {
+    notificationCountRef.current = notificationCount
+  }, [notificationCount])
+
+  useEffect(() => {
+    newDataRef.current = newData
+  }, [newData])
+
+  useEffect(() => {
+    const initialCount = cookies['notification'] || 0
+    setNotificationCount(initialCount)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cookies['notification']])
+
+  useEffect(() => {
+    const initialData = cookies['notificationdata'] || []
+    setNewData(initialData)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cookies['notificationdata']])
 
   useEffect(() => {
     let socket
@@ -21,16 +47,18 @@ const NotificationProvider = ({ children }) => {
 
       socket.onopen = () => {
         console.log('WebSocket connection established')
-        retryAttempts = 0 // Reset retry attempts on successful connection
+        retryAttempts = 0
       }
 
       socket.onmessage = (event) => {
         const data = JSON.parse(event.data)
 
         if (data.type === 'ADD_DELIVERY') {
-          console.log('add delivery notification received:', data)
           setNotificationCount(data.count)
+          setCookie('notification', data.count)
+
           setNewData(data.data)
+          setCookie('notificationdata', JSON.stringify(data.data), { path: '/' })
         }
         //  else if (data.type === 'PING') {
         //   socket.send(JSON.stringify({ type: 'PONG' })) // Respond to server's PING
@@ -50,7 +78,7 @@ const NotificationProvider = ({ children }) => {
 
       socket.onerror = (error) => {
         console.error('WebSocket error:', error)
-        socket.close() // Close the socket on error to trigger reconnection
+        socket.close()
       }
     }
 
@@ -59,7 +87,7 @@ const NotificationProvider = ({ children }) => {
     return () => {
       socket.close() // Cleanup on component unmount
     }
-  }, [])
+  }, [cookies, setCookie])
 
   return (
     <NotificationContext.Provider

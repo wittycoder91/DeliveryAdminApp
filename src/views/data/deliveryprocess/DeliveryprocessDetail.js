@@ -64,6 +64,7 @@ const DeliveryprocessDetail = () => {
   const [curDeliveryFeedback, setDeliveryFeedback] = useState('')
   const [curDeliveryImage, setcurDeliveryImage] = useState(null)
   const [curImage, setCurImage] = useState('')
+  const [curSDS, setCurSDS] = useState('')
   // Delivery disapprove states
   const [disApproveVisible, setDisApproveVisible] = useState(false)
   const [curDisApproveFeedback, setDisApproveFeedback] = useState('')
@@ -140,6 +141,7 @@ const DeliveryprocessDetail = () => {
         setCurTime(new Date(response.data.data?.time * 1000).toISOString().substr(11, 8))
         setCurDeliveryIndex(response.data.data?.status)
         setCurPO(response.data.data?.po)
+        setCurSDS(response.data.data?.sdsPath)
       } else {
         showWarningMsg(response.data.message)
       }
@@ -164,6 +166,7 @@ const DeliveryprocessDetail = () => {
     setCurDate('')
     setCurTime('')
     setCurPO('')
+    setCurSDS('')
   }
 
   // Preview the upload Disapprove Image
@@ -329,6 +332,29 @@ const DeliveryprocessDetail = () => {
       reader.readAsDataURL(file)
     }
   }
+  const handleDownloadSDS = async () => {
+    const fileUrl = `${process.env.REACT_APP_UPLOAD_URL}${curSDS.replace(/\\/g, '/')}`
+
+    try {
+      const response = await fetch(fileUrl)
+      if (!response.ok) {
+        throw new Error('Failed to fetch file')
+      }
+      const blob = await response.blob()
+      const blobUrl = URL.createObjectURL(blob)
+
+      const link = document.createElement('a')
+      link.href = blobUrl
+      link.download = curSDS.split('\\').pop()
+      document.body.appendChild(link)
+      link.click()
+
+      URL.revokeObjectURL(blobUrl)
+      document.body.removeChild(link)
+    } catch (error) {
+      console.error('Error downloading file:', error)
+    }
+  }
 
   return (
     <CRow>
@@ -404,9 +430,19 @@ const DeliveryprocessDetail = () => {
                 <CFormInput value={curTime} readOnly />
               </CCol>
             </CCol>
-            <CCol>
-              <CFormLabel>PO</CFormLabel>
-              <CFormInput value={curPO > 0 ? curPO : ''} readOnly />
+            <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
+              <CCol>
+                <CFormLabel>PO</CFormLabel>
+                <CFormInput value={curPO > 0 ? curPO : ''} readOnly />
+              </CCol>
+              {curSDS.length > 0 && (
+                <CCol className="d-flex flex-column">
+                  <CFormLabel>SDS sheet</CFormLabel>
+                  <CButton color="primary" className="w-max" onClick={handleDownloadSDS}>
+                    Download
+                  </CButton>
+                </CCol>
+              )}
             </CCol>
             {curLogoPreview && (
               <div className="mb-4 text-center">
@@ -421,11 +457,17 @@ const DeliveryprocessDetail = () => {
             <CCol className="d-flex justify-content-end gap-3 me-4">
               {(curDeliveryIndex === 0 || curDeliveryIndex === 2) && (
                 <CButton color="warning" className="wid-110" onClick={handleReject}>
-                  Disapprove
+                  {curDeliveryIndex === 0 ? 'Disapprove' : curDeliveryIndex === 2 ? 'Reject' : ''}
                 </CButton>
               )}
               <CButton color="primary" className="wid-110 dark-blue" onClick={handleConfirm}>
-                {curDeliveryIndex === 2 ? 'Received' : 'Approve'}
+                {curDeliveryIndex === 0
+                  ? 'Approve'
+                  : curDeliveryIndex === 1
+                    ? 'Received'
+                    : curDeliveryIndex === 2
+                      ? 'Accept'
+                      : 'Confirm'}
               </CButton>
             </CCol>
           </CCardBody>

@@ -2,7 +2,16 @@ import React, { useState, useEffect } from 'react'
 import TimePicker from 'react-bootstrap-time-picker'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { CButton, CCard, CCardBody, CCol, CForm, CFormLabel, CFormInput } from '@coreui/react'
+import {
+  CButton,
+  CCard,
+  CCardBody,
+  CCol,
+  CForm,
+  CFormLabel,
+  CFormInput,
+  CFormTextarea,
+} from '@coreui/react'
 
 import api from 'src/services'
 import { API_URLS } from 'src/config/Constants'
@@ -24,6 +33,10 @@ const Profile = () => {
   const [curState, setCurState] = useState('')
   const [curZipcode, setCurZipcode] = useState('')
   const [curTel, setCurTel] = useState('')
+  // Privacy Satement
+  const [curPrivacy, setCurPrivacy] = useState('')
+  // Report
+  const [curReport, setCurReport] = useState('')
 
   useEffect(() => {
     getInitSetting()
@@ -36,18 +49,20 @@ const Profile = () => {
       const response = await api.get(API_URLS.GETSETTING)
 
       if (response.data.success && response.data.data) {
-        setCurFirstTime(response.data.data.firsttime)
-        setCurSecondTime(response.data.data.secondtime)
-        setCurThirdTime(response.data.data.thirdtime)
-        setCurFourthTime(response.data.data.fourthtime)
-        setCurGolden(response.data.data.loyalty_golden)
-        setCurSilver(response.data.data.loyalty_silver)
-        setCurBronze(response.data.data.loyalty_bronze)
-        setCurAddress(response.data.data.address)
-        setCurCity(response.data.data.city)
-        setCurState(response.data.data.state)
-        setCurZipcode(response.data.data.zipcode)
-        setCurTel(response.data.data.telephone)
+        setCurFirstTime(response.data.data?.firsttime)
+        setCurSecondTime(response.data.data?.secondtime)
+        setCurThirdTime(response.data.data?.thirdtime)
+        setCurFourthTime(response.data.data?.fourthtime)
+        setCurGolden(response.data.data?.loyalty_golden)
+        setCurSilver(response.data.data?.loyalty_silver)
+        setCurBronze(response.data.data?.loyalty_bronze)
+        setCurAddress(response.data.data?.address)
+        setCurCity(response.data.data?.city)
+        setCurState(response.data.data?.state)
+        setCurZipcode(response.data.data?.zipcode)
+        setCurTel(response.data.data?.telephone)
+        setCurPrivacy(response.data.data?.terms)
+        setCurReport(response.data.data?.report)
       } else {
         showWarningMsg(response.data.message)
       }
@@ -89,7 +104,9 @@ const Profile = () => {
       curCity.length === 0 ||
       curState.length === 0 ||
       curZipcode.length === 0 ||
-      curTel.length === 0
+      curTel.length === 0 ||
+      curPrivacy.length === 0 ||
+      curReport.length === 0
     ) {
       showWarningMsg('It looks like some of the information you entered is incorrect.')
     } else if (
@@ -118,6 +135,8 @@ const Profile = () => {
           curState: curState,
           curZipcode: curZipcode,
           curTel: curTel,
+          curPrivacy: curPrivacy,
+          curReport: curReport,
         })
 
         if (response.data.success) {
@@ -248,6 +267,24 @@ const Profile = () => {
                 placeholder="Tel"
                 value={curTel}
                 onChange={(e) => setCurTel(e.target.value)}
+              />
+            </CCol>
+            <h4 className="px-2 pt-3 mb-0">Privacy Statement</h4>
+            <CCol>
+              <CFormTextarea
+                placeholder="Privacy Statement"
+                rows={3}
+                value={curPrivacy}
+                onChange={(e) => setCurPrivacy(e.target.value)}
+              />
+            </CCol>
+            <h4 className="px-2 pt-3 mb-0">Report</h4>
+            <CCol>
+              <CFormTextarea
+                placeholder="Report"
+                rows={3}
+                value={curReport}
+                onChange={(e) => setCurReport(e.target.value)}
               />
             </CCol>
             <CCol xs={12} className="d-flex justify-content-end pe-4">

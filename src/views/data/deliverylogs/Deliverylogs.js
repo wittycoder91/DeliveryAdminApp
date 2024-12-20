@@ -334,9 +334,9 @@ const Tables = () => {
                       <CTableDataCell className="text-center">{row?.netamount}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.packageName}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.countpackage}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row?.residue}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row?.color}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row?.condition}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row?.residueName}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row?.colorName}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row?.conditionName}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.date}</CTableDataCell>
                       <CTableDataCell className="text-center">
                         {new Date(row?.time * 1000).toISOString().substr(11, 8)}

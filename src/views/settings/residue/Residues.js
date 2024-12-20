@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   CCard,
   CCardBody,
@@ -22,10 +22,11 @@ import {
   CModalTitle,
   CModalBody,
   CModalFooter,
-  CFormCheck,
+  CFormLabel,
+  CFormTextarea,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilSearch, cilXCircle, cilHandshake, cilArrowThickBottom } from '@coreui/icons'
+import { cilPencil, cilSearch, cilXCircle } from '@coreui/icons'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -33,24 +34,10 @@ import api from 'src/services'
 import { API_URLS } from 'src/config/Constants'
 import { showSuccessMsg, showWarningMsg, showErrorMsg } from 'src/config/common'
 
-const Supplier = () => {
-  const tableHeaders = [
-    '',
-    'No',
-    'Supplier',
-    'Phone number',
-    'Total Weight',
-    'Street Address',
-    'City',
-    'Province',
-    'Zip Code',
-    'Email',
-    'Loyalty',
-    'Trust',
-    'W9',
-    'Action',
-  ]
+const Residues = () => {
+  const tableHeaders = ['No', 'Residue Material Name', 'Description', 'Note', 'Action']
 
+  const [visible, setVisible] = useState(false)
   const [visibleDel, setVisibleDel] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
@@ -60,18 +47,20 @@ const Supplier = () => {
   const [totalCount, setTotalCount] = useState(0)
   const [selId, setSelId] = useState('')
 
-  // Calculate the data for the current page
-  const startIndex = (currentPage - 1) * itemsPerPage
+  // Residues Dialog States
+  const [curResidueName, setCurResidueName] = useState('')
+  const [curResidueDesc, setCurResidueDesc] = useState('')
+  const [curResidueNote, setCurResidueNote] = useState('')
 
   useEffect(() => {
-    getSuppliers(curSearh, itemsPerPage, currentPage)
+    getResidues(curSearh, itemsPerPage, currentPage)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const getSuppliers = async (curSearh, itemsPerPage, currentPage) => {
+  const getResidues = async (curSearh, itemsPerPage, currentPage) => {
     try {
-      const response = await api.get(API_URLS.GETSUPPLIER, {
+      const response = await api.get(API_URLS.GETRESIDUE, {
         params: {
           curSearh: curSearh,
           itemsPerPage: itemsPerPage,
@@ -97,20 +86,21 @@ const Supplier = () => {
   const handleSearch = () => {
     setCurrentPage(1)
 
-    getSuppliers(curSearh, itemsPerPage, 1)
+    getResidues(curSearh, itemsPerPage, 1)
   }
+
   // Handle the Table pagination
   const handlePageChange = (page) => {
     setCurrentPage(page)
 
-    getSuppliers(curSearh, itemsPerPage, page)
+    getResidues(curSearh, itemsPerPage, page)
   }
   const handleItemsPerPageChange = (event) => {
     const newItemsPerPage = parseInt(event.target.value, 10)
     setItemsPerPage(newItemsPerPage)
     setCurrentPage(1)
 
-    getSuppliers(curSearh, newItemsPerPage, 1)
+    getResidues(curSearh, newItemsPerPage, 1)
   }
   const getPaginationItems = () => {
     const totalPageCount = Math.ceil(totalCount / itemsPerPage)
@@ -145,32 +135,61 @@ const Supplier = () => {
     return pages
   }
 
-  const handleEditSupplier = async (e, selId) => {
-    const checkedStatus = e.target.checked
+  const handleAdd = () => {
+    setSelId('')
+    setCurResidueName('')
+    setCurResidueDesc('')
+    setCurResidueNote('')
 
-    try {
-      const response = await api.post(API_URLS.EDITSUPPLIER, {
-        selID: selId,
-        trust: checkedStatus ? 1 : 0,
-      })
+    setVisible(!visible)
+  }
+  const handleAddColor = async () => {
+    if (curResidueName.length === 0 || curResidueDesc.length === 0) {
+      showErrorMsg('Please enter the Residue Material name or description')
+    } else {
+      var apiURL = ''
+      if (selId.length > 0) apiURL = API_URLS.EDITRESIDUE
+      else apiURL = API_URLS.ADDRESIDUE
 
-      if (response.data.success) {
-        showSuccessMsg(response.data.message)
+      try {
+        const response = await api.post(apiURL, {
+          selID: selId,
+          residueName: curResidueName,
+          residueDesc: curResidueDesc,
+          note: curResidueNote,
+        })
 
-        setCurrentPage(1)
-        getSuppliers(curSearh, itemsPerPage, 1)
-      } else {
-        showWarningMsg(response.data.message)
-      }
-    } catch (error) {
-      if (error.response.data.msg) {
-        showErrorMsg(error.response.data.msg)
-      } else {
-        showErrorMsg(error.message)
+        if (response.data.success) {
+          showSuccessMsg(response.data.message)
+          setVisible(false)
+
+          setCurrentPage(1)
+          getResidues(curSearh, itemsPerPage, 1)
+        } else {
+          showWarningMsg(response.data.message)
+        }
+      } catch (error) {
+        if (error.response.data.msg) {
+          showErrorMsg(error.response.data.msg)
+        } else {
+          showErrorMsg(error.message)
+        }
       }
     }
   }
-  const handleSelDelSupplier = (selId) => {
+  const handleSelEditResidue = (selId) => {
+    setVisible(!visible)
+    setSelId('')
+
+    const selectedItem = curData.find((item) => item._id === selId)
+    if (selectedItem) {
+      setSelId(selectedItem?._id)
+      setCurResidueName(selectedItem?.residueName)
+      setCurResidueDesc(selectedItem?.residueDesc)
+      setCurResidueNote(selectedItem?.note)
+    }
+  }
+  const handleSelDelResidue = (selId) => {
     setVisibleDel(!visibleDel)
     setSelId('')
 
@@ -181,7 +200,7 @@ const Supplier = () => {
   }
   const handleSelRemove = async () => {
     try {
-      const response = await api.post(API_URLS.REMOVESUPPLIER, {
+      const response = await api.post(API_URLS.REMOVERESIDUE, {
         selID: selId,
       })
 
@@ -190,7 +209,7 @@ const Supplier = () => {
         setVisibleDel(false)
 
         setCurrentPage(1)
-        getSuppliers(curSearh, itemsPerPage, 1)
+        getResidues(curSearh, itemsPerPage, 1)
       } else {
         showWarningMsg(response.data.message)
       }
@@ -202,36 +221,18 @@ const Supplier = () => {
       }
     }
   }
-  const handleDownLoadW9 = (w9Path) => {
-    DownLoadW9(w9Path)
-  }
-  const DownLoadW9 = async (w9Path) => {
-    const fileUrl = `${process.env.REACT_APP_UPLOAD_URL}${w9Path.replace(/\\/g, '/')}`
-    try {
-      const response = await fetch(fileUrl)
-      if (!response.ok) {
-        throw new Error('Failed to fetch file')
-      }
-      const blob = await response.blob()
-      const blobUrl = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = blobUrl
-      link.download = w9Path.split('\\').pop()
-      document.body.appendChild(link)
-      link.click()
-      URL.revokeObjectURL(blobUrl)
-      document.body.removeChild(link)
-    } catch (error) {
-      console.error('Error downloading file:', error)
-    }
-  }
 
   return (
     <CCol xs={12}>
       <CCard className="mb-4">
-        <h3 className="px-3 pt-3 mb-0">Supplier</h3>
+        <h3 className="px-3 pt-3 mb-0">Residue Materials</h3>
         <CCardBody>
           {/* Table */}
+          <CCol className="mb-3">
+            <CButton color="primary" className="wid-110 dark-blue" onClick={handleAdd}>
+              Add
+            </CButton>
+          </CCol>
           <CCol className="d-flex justify-content-center align-items-start gap-3">
             <CInputGroup className="flex-nowrap mb-4">
               <CInputGroupText id="addon-wrapping">
@@ -263,51 +264,18 @@ const Supplier = () => {
                 {curData?.length > 0 ? (
                   curData.map((row, index) => (
                     <CTableRow key={index}>
-                      <CTableDataCell className="text-center">
-                        {row.trust ? <CIcon icon={cilHandshake} className="me-2" /> : <></>}
-                      </CTableDataCell>
                       <CTableHeaderCell className="text-center" scope="row">
-                        {startIndex + index + 1}
+                        {(currentPage - 1) * itemsPerPage + index + 1}
                       </CTableHeaderCell>
-                      <CTableDataCell className="text-center">{row.name}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row.phonenumber}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row.totalweight}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row.address}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row.city}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row.state}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row.zipcode}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row.email}</CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        {row.loyalty === 3 ? (
-                          <img src="/icons/gold.png" alt="" width={42} height={50} />
-                        ) : row.loyalty === 2 ? (
-                          <img src="/icons/silver.png" alt="" width={42} height={50} />
-                        ) : row.loyalty === 1 ? (
-                          <img src="/icons/bronz.png" alt="" width={42} height={50} />
-                        ) : (
-                          <></>
-                        )}
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        <CFormCheck
-                          label=""
-                          checked={row.trust ? true : false}
-                          onChange={(e) => handleEditSupplier(e, row._id)}
-                        />
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        {row?.w9Path.length > 0 ? (
-                          <CIcon
-                            icon={cilArrowThickBottom}
-                            onClick={() => handleDownLoadW9(row.w9Path)}
-                          />
-                        ) : (
-                          ''
-                        )}
-                      </CTableDataCell>
+                      <CTableDataCell className="text-center">{row?.residueName}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row?.residueDesc}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row?.note}</CTableDataCell>
                       <CTableDataCell>
                         <CCol className="d-flex justify-content-center align-items-center">
-                          <CButton onClick={() => handleSelDelSupplier(row?._id)}>
+                          <CButton onClick={() => handleSelEditResidue(row?._id)}>
+                            <CIcon icon={cilPencil} />
+                          </CButton>
+                          <CButton onClick={() => handleSelDelResidue(row?._id)}>
                             <CIcon icon={cilXCircle} />
                           </CButton>
                         </CCol>
@@ -316,7 +284,7 @@ const Supplier = () => {
                   ))
                 ) : (
                   <CTableRow>
-                    <CTableDataCell colSpan={10} className="text-center">
+                    <CTableDataCell colSpan={5} className="text-center">
                       There is no result
                     </CTableDataCell>
                   </CTableRow>
@@ -383,6 +351,52 @@ const Supplier = () => {
           </CRow>
         </CCardBody>
       </CCard>
+      {/* Add Modal */}
+      <CModal
+        alignment="center"
+        scrollable
+        visible={visible}
+        onClose={() => setVisible(false)}
+        aria-labelledby="VerticallyCenteredScrollableExample2"
+      >
+        <CModalHeader>
+          <CModalTitle id="VerticallyCenteredScrollableExample2">Residue Materials</CModalTitle>
+        </CModalHeader>
+        <CModalBody className="d-flex flex-column gap-2">
+          <CCol>
+            <CFormLabel>Residue Material Name</CFormLabel>
+            <CFormInput
+              placeholder="Residue Material Name"
+              value={curResidueName}
+              onChange={(e) => setCurResidueName(e.target.value)}
+            />
+          </CCol>
+          <CCol>
+            <CFormLabel>Description</CFormLabel>
+            <CFormTextarea
+              rows={3}
+              value={curResidueDesc}
+              onChange={(e) => setCurResidueDesc(e.target.value)}
+            ></CFormTextarea>
+          </CCol>
+          <CCol>
+            <CFormLabel>Note</CFormLabel>
+            <CFormInput
+              placeholder="Note"
+              value={curResidueNote}
+              onChange={(e) => setCurResidueNote(e.target.value)}
+            />
+          </CCol>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setVisible(false)}>
+            Close
+          </CButton>
+          <CButton color="primary" onClick={handleAddColor}>
+            Save changes
+          </CButton>
+        </CModalFooter>
+      </CModal>
       {/* Remove Modal */}
       <CModal
         alignment="center"
@@ -391,9 +405,9 @@ const Supplier = () => {
         aria-labelledby="VerticallyCenteredExample"
       >
         <CModalHeader>
-          <CModalTitle id="VerticallyCenteredExample">Supplier Remove</CModalTitle>
+          <CModalTitle id="VerticallyCenteredExample">Residue Materials Remove</CModalTitle>
         </CModalHeader>
-        <CModalBody>Do you want to remove supplier information</CModalBody>
+        <CModalBody>Do you want to remove current residue material?</CModalBody>
         <CModalFooter>
           <CButton color="secondary" onClick={() => setVisibleDel(false)}>
             Cancel
@@ -419,4 +433,4 @@ const Supplier = () => {
   )
 }
 
-export default Supplier
+export default Residues

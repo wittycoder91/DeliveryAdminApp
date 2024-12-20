@@ -15,6 +15,7 @@ import {
 } from '@coreui/react'
 import axios from 'axios'
 import CIcon from '@coreui/icons-react'
+import { useCookies } from 'react-cookie'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { cilLockLocked, cilUser } from '@coreui/icons'
@@ -24,6 +25,7 @@ import { showWarningMsg, showErrorMsg } from 'src/config/common'
 
 const Login = () => {
   const navigate = useNavigate()
+  const [, setCookie] = useCookies()
   const [curUserId, setCurUserId] = useState('')
   const [curPassword, setCurPassword] = useState('')
 
@@ -38,7 +40,11 @@ const Login = () => {
 
       if (response.data.success) {
         navigate(`/dashboard`)
+
         localStorage.setItem('token', response.data.token)
+
+        setCookie('notification', 0)
+        setCookie('notificationdata', [])
       } else {
         showErrorMsg(response.data.message)
       }

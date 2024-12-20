@@ -9,6 +9,7 @@ import {
   CDropdownMenu,
   CDropdownToggle,
 } from '@coreui/react'
+import { useCookies } from 'react-cookie'
 import CIcon from '@coreui/icons-react'
 import { useNavigate } from 'react-router-dom'
 import { cilLockLocked, cilUser } from '@coreui/icons'
@@ -17,9 +18,11 @@ import avatar from './../../assets/images/avatars/avatar.jpg'
 
 const AppHeaderDropdown = () => {
   const navigate = useNavigate()
+  const [cookies, , removeCookie] = useCookies()
 
   const handleLogout = () => {
     localStorage.clear()
+    Object.keys(cookies).forEach((cookieName) => removeCookie(cookieName))
 
     navigate('/login')
   }
