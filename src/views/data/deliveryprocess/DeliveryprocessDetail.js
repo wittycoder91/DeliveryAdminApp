@@ -633,13 +633,15 @@ const DeliveryprocessDetail = () => {
           aria-labelledby="VerticallyCenteredScrollableExample2"
         >
           <CModalHeader>
-            <CModalTitle id="VerticallyCenteredScrollableExample2">Delivery Price</CModalTitle>
+            <CModalTitle id="VerticallyCenteredScrollableExample2">
+              Please input Unit Price
+            </CModalTitle>
           </CModalHeader>
           <CModalBody className="d-flex flex-column gap-2">
             <CCol>
-              <CFormLabel>Price</CFormLabel>
+              <CFormLabel>Unit Price</CFormLabel>
               <CFormInput
-                placeholder="Price"
+                placeholder="Unit Price"
                 type="number"
                 value={curPrice}
                 onChange={(e) => setCurPrice(e.target.value)}
