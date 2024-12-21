@@ -46,7 +46,6 @@ const DeliverylogDetail = () => {
   const [curFeebackImage, setCurFeebackImage] = useState('')
   const [curRejectImages, setCurRejectImages] = useState([])
 
-  console.log(curTareWeight)
   useEffect(() => {
     getSelDelivery()
 
@@ -70,7 +69,6 @@ const DeliverylogDetail = () => {
         setCurPackaging(response.data.data?.packaging)
         setCurCountPackage(response.data.data?.countpackage)
         setCurColor(response.data.data?.color)
-        setCurResidue(response.data.data?.residue)
         setCurCondition(response.data.data?.condition)
         setCurDeliveryPreview(response.data.data?.avatarPath)
         setCurDate(response.data.data?.date)
@@ -83,6 +81,11 @@ const DeliverylogDetail = () => {
         setCurQuality(response.data.data?.quality)
         setCurInspection(response.data.data?.insepction)
         setCurSDS(response.data.data?.sdsPath)
+        if (response.data.data?.residue === 'Other') {
+          setCurResidue(response.data.data?.other)
+        } else {
+          setCurResidue(response.data.data?.residue)
+        }
         if (response.data.data?.feedbackImage) {
           const rawAvatarPath = response.data.data?.feedbackImage
           const normalizedAvatarPath = rawAvatarPath.replace(/\\/g, '/')
@@ -176,7 +179,7 @@ const DeliverylogDetail = () => {
             </CCol>
             <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
               <CCol>
-                <CFormLabel>Weight(lbs)</CFormLabel>
+                <CFormLabel>Estimated Weight (LBS)</CFormLabel>
                 <CFormInput value={curWeight} readOnly />
               </CCol>
               <CCol>
@@ -186,8 +189,8 @@ const DeliverylogDetail = () => {
             </CCol>
             <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
               <CCol>
-                <CFormLabel>The Total of packages</CFormLabel>
-                <CFormInput placeholder=" Total of packages" value={curCountPackage} readOnly />
+                <CFormLabel>Estimated # of Packages</CFormLabel>
+                <CFormInput value={curCountPackage} readOnly />
               </CCol>
               <CCol>
                 <CFormLabel>Color</CFormLabel>

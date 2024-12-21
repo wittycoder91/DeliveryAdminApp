@@ -134,7 +134,6 @@ const DeliveryprocessDetail = () => {
         setCurPackaging(response.data.data?.packaging)
         setCurCountPackage(response.data.data?.countpackage)
         setCurColor(response.data.data?.color)
-        setCurResidue(response.data.data?.residue)
         setCurCondition(response.data.data?.condition)
         setCurLogoPreview(response.data.data?.avatarPath)
         setCurDate(response.data.data?.date)
@@ -142,6 +141,11 @@ const DeliveryprocessDetail = () => {
         setCurDeliveryIndex(response.data.data?.status)
         setCurPO(response.data.data?.po)
         setCurSDS(response.data.data?.sdsPath)
+        if (response.data.data?.residue === 'Other') {
+          setCurResidue(response.data.data?.other)
+        } else {
+          setCurResidue(response.data.data?.residue)
+        }
       } else {
         showWarningMsg(response.data.message)
       }
@@ -392,7 +396,7 @@ const DeliveryprocessDetail = () => {
             </CCol>
             <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
               <CCol>
-                <CFormLabel>Weight(lbs)</CFormLabel>
+                <CFormLabel>Estimated Weight(lbs)</CFormLabel>
                 <CFormInput value={curWeight} readOnly />
               </CCol>
               <CCol>
@@ -402,8 +406,8 @@ const DeliveryprocessDetail = () => {
             </CCol>
             <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
               <CCol>
-                <CFormLabel>The Total of packages</CFormLabel>
-                <CFormInput placeholder=" Total of packages" value={curCountPackage} readOnly />
+                <CFormLabel>Estimated # of Packages </CFormLabel>
+                <CFormInput value={curCountPackage} readOnly />
               </CCol>
               <CCol>
                 <CFormLabel>Color</CFormLabel>

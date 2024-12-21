@@ -34,11 +34,11 @@ const Tables = () => {
     'Supplier',
     'PO #',
     'Material',
-    'Weight',
+    'Estimated Weight',
     'Tare Weight',
     'Net Weight',
     'Packaging',
-    'The Total of packages',
+    'Estimated # of Packages',
     'Residue Material',
     'Color',
     'Conditions',
@@ -333,7 +333,9 @@ const Tables = () => {
                       <CTableDataCell className="text-center">{row?.netamount}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.packageName}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.countpackage}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row?.residueName}</CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {row?.residueName === 'Other' ? row?.other : row?.residueName}
+                      </CTableDataCell>
                       <CTableDataCell className="text-center">{row?.colorName}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.conditionName}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.date}</CTableDataCell>
@@ -349,7 +351,7 @@ const Tables = () => {
                   ))
                 ) : (
                   <CTableRow>
-                    <CTableDataCell colSpan={14} className="text-center">
+                    <CTableDataCell colSpan={17} className="text-center">
                       There is no result
                     </CTableDataCell>
                   </CTableRow>

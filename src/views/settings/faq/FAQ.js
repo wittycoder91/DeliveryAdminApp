@@ -235,7 +235,11 @@ const FAQ = () => {
                         {(currentPage - 1) * itemsPerPage + index + 1}
                       </CTableHeaderCell>
                       <CTableDataCell className="text-center">{row.title}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row.content}</CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {row?.content && row.content.length > 100
+                          ? `${row.content.substring(0, 100)}...`
+                          : row?.content}
+                      </CTableDataCell>
                       <CTableDataCell>
                         <CCol className="d-flex justify-content-center align-items-center">
                           <CButton onClick={() => handleSelEditFAQ(row?._id)}>
@@ -340,7 +344,7 @@ const FAQ = () => {
           <CCol>
             <CFormLabel>Content</CFormLabel>
             <CFormTextarea
-              rows={3}
+              rows={5}
               value={curContent}
               onChange={(e) => setCurContent(e.target.value)}
             ></CFormTextarea>

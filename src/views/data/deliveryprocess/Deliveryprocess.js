@@ -34,9 +34,9 @@ const Deliveryprocess = () => {
     'Supplier',
     'PO #',
     'Material',
-    'Weight',
+    'Estimated Weight',
     'Packaging',
-    'The Total of packages',
+    'Estimated # of Packages ',
     'Residue Material',
     'Color',
     'Conditions',
@@ -345,7 +345,9 @@ const Deliveryprocess = () => {
                       <CTableDataCell className="text-center">{row?.weight}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.packageName}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.countpackage}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row?.residueName}</CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {row?.residueName === 'Other' ? row?.other : row?.residueName}
+                      </CTableDataCell>
                       <CTableDataCell className="text-center">{row?.colorName}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.conditionName}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.date}</CTableDataCell>

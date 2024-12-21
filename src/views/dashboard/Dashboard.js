@@ -34,8 +34,7 @@ const Dashboard = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  console.log(weightData)
-  console.log(curDeliveryData)
+
   const getDeliveryData = async (view) => {
     try {
       const response = await api.get(`${API_URLS.GETDASHBOARDDELIERY}?view=${view}`)
@@ -217,7 +216,7 @@ const Dashboard = () => {
                 />
               </CButtonGroup>
             </CCol>
-            <h3 className="px-4 pt-3">Weight Chart</h3>
+            <h3 className="px-4 pt-3">Estimated Weight Chart</h3>
             <CCardBody>
               <CChartLine data={weightData} labels="months" />
             </CCardBody>

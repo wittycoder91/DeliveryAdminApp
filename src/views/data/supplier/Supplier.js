@@ -39,12 +39,12 @@ const Supplier = () => {
     'No',
     'Supplier',
     'Phone number',
-    'Total Weight',
     'Street Address',
     'City',
     'Province',
     'Zip Code',
     'Email',
+    'Total delivered (lbs)',
     'Loyalty',
     'Trust',
     'W9',
@@ -271,12 +271,12 @@ const Supplier = () => {
                       </CTableHeaderCell>
                       <CTableDataCell className="text-center">{row.name}</CTableDataCell>
                       <CTableDataCell className="text-center">{row.phonenumber}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row.totalweight}</CTableDataCell>
                       <CTableDataCell className="text-center">{row.address}</CTableDataCell>
                       <CTableDataCell className="text-center">{row.city}</CTableDataCell>
                       <CTableDataCell className="text-center">{row.state}</CTableDataCell>
                       <CTableDataCell className="text-center">{row.zipcode}</CTableDataCell>
                       <CTableDataCell className="text-center">{row.email}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row.totalweight}</CTableDataCell>
                       <CTableDataCell className="text-center">
                         {row.loyalty === 3 ? (
                           <img src="/icons/gold.png" alt="" width={42} height={50} />
