@@ -65,6 +65,9 @@ const DeliveryprocessDetail = () => {
   const [curDeliveryImage, setcurDeliveryImage] = useState(null)
   const [curImage, setCurImage] = useState('')
   const [curSDS, setCurSDS] = useState('')
+  // Delivery Price states
+  const [priceVisible, setPriceVisible] = useState(false)
+  const [curPrice, setCurPrice] = useState(0)
   // Delivery disapprove states
   const [disApproveVisible, setDisApproveVisible] = useState(false)
   const [curDisApproveFeedback, setDisApproveFeedback] = useState('')
@@ -254,8 +257,14 @@ const DeliveryprocessDetail = () => {
       setDeliveryQuality(allQualitys[0]._id)
     }
   }
+  const setInitialPriceVal = () => {
+    setCurPrice(0)
+  }
   const handleConfirm = async () => {
-    if (curDeliveryIndex === 2) {
+    if (curDeliveryIndex === 0) {
+      setPriceVisible(!priceVisible)
+      setInitialPriceVal()
+    } else if (curDeliveryIndex === 2) {
       setVisible(!visible)
       setInitialDeliveryVal()
     } else {
@@ -263,6 +272,28 @@ const DeliveryprocessDetail = () => {
         const response = await api.post(API_URLS.UPDATESELDELIVERY, {
           selDeliveryId: selId,
           status: curDeliveryIndex,
+          price: 0,
+        })
+
+        if (response.data.success) {
+          navigate('/data/deliveryprocess')
+        } else {
+          showWarningMsg(response.data.message)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }
+  const handlePriceSave = async () => {
+    if (curPrice.length === 0 || isNaN(parseInt(curPrice))) {
+      showErrorMsg('Please input the price')
+    } else {
+      try {
+        const response = await api.post(API_URLS.UPDATESELDELIVERY, {
+          selDeliveryId: selId,
+          status: curDeliveryIndex,
+          price: curPrice,
         })
 
         if (response.data.success) {
@@ -590,6 +621,37 @@ const DeliveryprocessDetail = () => {
             </CButton>
             <CButton color="primary" onClick={handleSave}>
               Save changes
+            </CButton>
+          </CModalFooter>
+        </CModal>
+        {/* Delivery Price Modal */}
+        <CModal
+          alignment="center"
+          scrollable
+          visible={priceVisible}
+          onClose={() => setPriceVisible(false)}
+          aria-labelledby="VerticallyCenteredScrollableExample2"
+        >
+          <CModalHeader>
+            <CModalTitle id="VerticallyCenteredScrollableExample2">Delivery Price</CModalTitle>
+          </CModalHeader>
+          <CModalBody className="d-flex flex-column gap-2">
+            <CCol>
+              <CFormLabel>Price</CFormLabel>
+              <CFormInput
+                placeholder="Price"
+                type="number"
+                value={curPrice}
+                onChange={(e) => setCurPrice(e.target.value)}
+              />
+            </CCol>
+          </CModalBody>
+          <CModalFooter>
+            <CButton color="secondary" onClick={() => setVisible(false)}>
+              Close
+            </CButton>
+            <CButton color="primary" onClick={handlePriceSave}>
+              Confirm
             </CButton>
           </CModalFooter>
         </CModal>

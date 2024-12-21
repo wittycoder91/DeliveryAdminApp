@@ -38,6 +38,7 @@ const Supplier = () => {
     '',
     'No',
     'Supplier',
+    'Contact',
     'Phone number',
     'Street Address',
     'City',
@@ -270,6 +271,7 @@ const Supplier = () => {
                         {startIndex + index + 1}
                       </CTableHeaderCell>
                       <CTableDataCell className="text-center">{row.name}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row.contact}</CTableDataCell>
                       <CTableDataCell className="text-center">{row.phonenumber}</CTableDataCell>
                       <CTableDataCell className="text-center">{row.address}</CTableDataCell>
                       <CTableDataCell className="text-center">{row.city}</CTableDataCell>
@@ -316,7 +318,7 @@ const Supplier = () => {
                   ))
                 ) : (
                   <CTableRow>
-                    <CTableDataCell colSpan={10} className="text-center">
+                    <CTableDataCell colSpan={11} className="text-center">
                       There is no result
                     </CTableDataCell>
                   </CTableRow>
