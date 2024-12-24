@@ -46,6 +46,8 @@ export const API_URLS = {
   GETSUPPLIER: `${process.env.REACT_APP_API_URL}/setting/admin/get-supplier`,
   EDITSUPPLIER: `${process.env.REACT_APP_API_URL}/setting/admin/edit-supplier`,
   REMOVESUPPLIER: `${process.env.REACT_APP_API_URL}/setting/admin/remove-supplier`,
+  GETPRICESUPPLIER: `${process.env.REACT_APP_API_URL}/setting/admin/get-price-supplier`,
+  SETPRICESUPPLIER: `${process.env.REACT_APP_API_URL}/setting/admin/set-price-supplier`,
   // Delivery
   SETREADDELIVERY: `${process.env.REACT_APP_API_URL}/delivery/admin/set-read-delivery`,
   GETDELIVERY: `${process.env.REACT_APP_API_URL}/delivery/admin/get-delivery`,

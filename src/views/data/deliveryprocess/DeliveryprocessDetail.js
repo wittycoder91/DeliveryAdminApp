@@ -649,7 +649,7 @@ const DeliveryprocessDetail = () => {
             </CCol>
           </CModalBody>
           <CModalFooter>
-            <CButton color="secondary" onClick={() => setVisible(false)}>
+            <CButton color="secondary" onClick={() => setPriceVisible(false)}>
               Close
             </CButton>
             <CButton color="primary" onClick={handlePriceSave}>

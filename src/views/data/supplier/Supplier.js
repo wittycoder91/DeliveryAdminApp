@@ -23,6 +23,7 @@ import {
   CModalBody,
   CModalFooter,
   CFormCheck,
+  CFormLabel,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilSearch, cilXCircle, cilHandshake, cilArrowThickBottom } from '@coreui/icons'
@@ -60,6 +61,11 @@ const Supplier = () => {
   const [curData, setCurData] = useState([])
   const [totalCount, setTotalCount] = useState(0)
   const [selId, setSelId] = useState('')
+
+  // Unit Price Modal States
+  const [curPriceVisible, setCurPriceVisible] = useState(false)
+  const [curPrice, setCurPrice] = useState(0)
+  const [curSelUserId, setCurSelUserID] = useState('')
 
   // Calculate the data for the current page
   const startIndex = (currentPage - 1) * itemsPerPage
@@ -168,6 +174,58 @@ const Supplier = () => {
         showErrorMsg(error.response.data.msg)
       } else {
         showErrorMsg(error.message)
+      }
+    }
+
+    if (checkedStatus) {
+      setInitPriceVal()
+
+      setCurSelUserID(selId)
+      setCurPriceVisible(!curPriceVisible)
+
+      if (selId.length > 0) {
+        try {
+          const response = await api.post(API_URLS.GETPRICESUPPLIER, {
+            selID: selId,
+          })
+
+          if (response.data.success) {
+            setCurPrice(response.data.data?.price)
+          } else {
+            showWarningMsg(response.data.message)
+          }
+        } catch (error) {
+          if (error.response.data.msg) {
+            showErrorMsg(error.response.data.msg)
+          } else {
+            showErrorMsg(error.message)
+          }
+        }
+      }
+    }
+  }
+  const setInitPriceVal = () => {
+    setCurPrice(0)
+    setCurSelUserID('')
+  }
+  const handlePriceSave = async () => {
+    if (curPrice.length === 0 || isNaN(parseInt(curPrice))) {
+      showErrorMsg('Please input the price')
+    } else {
+      try {
+        const response = await api.post(API_URLS.SETPRICESUPPLIER, {
+          selID: curSelUserId,
+          price: curPrice,
+        })
+
+        if (response.data.success) {
+          setCurPriceVisible(false)
+          showSuccessMsg(response.data.message)
+        } else {
+          showWarningMsg(response.data.message)
+        }
+      } catch (error) {
+        console.error(error)
       }
     }
   }
@@ -385,6 +443,36 @@ const Supplier = () => {
           </CRow>
         </CCardBody>
       </CCard>
+      {/* Unit Price Modal */}
+      <CModal
+        alignment="center"
+        visible={curPriceVisible}
+        onClose={() => setCurPriceVisible(false)}
+        aria-labelledby="VerticallyCenteredExample"
+      >
+        <CModalHeader>
+          <CModalTitle id="VerticallyCenteredExample">Unit Price</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CCol>
+            <CFormLabel>Unit Price</CFormLabel>
+            <CFormInput
+              placeholder="Unit Price"
+              type="number"
+              value={curPrice}
+              onChange={(e) => setCurPrice(e.target.value)}
+            />
+          </CCol>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setCurPriceVisible(false)}>
+            Cancel
+          </CButton>
+          <CButton color="primary" onClick={handlePriceSave}>
+            Confirm
+          </CButton>
+        </CModalFooter>
+      </CModal>
       {/* Remove Modal */}
       <CModal
         alignment="center"

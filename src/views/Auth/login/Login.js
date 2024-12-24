@@ -60,14 +60,13 @@ const Login = () => {
               <CCardBody className="d-flex justify-content-center align-items-center">
                 <CForm className="w-100">
                   <h1>Log in to your Account</h1>
-                  <p className="text-body-secondary">Welcome back! Select method to log in</p>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
                       <CIcon icon={cilUser} />
                     </CInputGroupText>
                     <CFormInput
-                      placeholder="Username"
-                      autoComplete="username"
+                      placeholder="Email"
+                      autoComplete="Email"
                       onChange={(e) => setCurUserId(e.target.value)}
                     />
                   </CInputGroup>
@@ -94,7 +93,7 @@ const Login = () => {
               <CCardBody className="d-flex justify-content-center align-items-center text-center">
                 <CRow className="justify-content-center align-items-center gap-3">
                   <img src="./logo_transparent.png" className="authlogo" alt="" />
-                  <h1>Welcome Admin Page</h1>
+                  <h1 className="text-dark">Welcome Admin Page</h1>
                 </CRow>
               </CCardBody>
             </CCard>

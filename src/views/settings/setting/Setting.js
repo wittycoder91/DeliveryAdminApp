@@ -25,8 +25,11 @@ const Profile = () => {
   const [curFourthTime, setCurFourthTime] = useState(0)
   // Loyalty states
   const [curGolden, setCurGolden] = useState(0)
+  const [curGoldenBenefit, setCurGoldenBenefit] = useState('')
   const [curSilver, setCurSilver] = useState(0)
+  const [curSilverBenefit, setCurSilverBenefit] = useState('')
   const [curBronze, setCurBronze] = useState(0)
+  const [curBronzeBenefit, setCurBronzeBenefit] = useState('')
   // Company Information states
   const [curAddress, setCurAddress] = useState('')
   const [curCity, setCurCity] = useState('')
@@ -54,8 +57,11 @@ const Profile = () => {
         setCurThirdTime(response.data.data?.thirdtime)
         setCurFourthTime(response.data.data?.fourthtime)
         setCurGolden(response.data.data?.loyalty_golden)
+        setCurGoldenBenefit(response.data.data?.loyalty_golden_benefit)
         setCurSilver(response.data.data?.loyalty_silver)
+        setCurSilverBenefit(response.data.data?.loyalty_silver_benefit)
         setCurBronze(response.data.data?.loyalty_bronze)
+        setCurBronzeBenefit(response.data.data?.loyalty_bronze_benefit)
         setCurAddress(response.data.data?.address)
         setCurCity(response.data.data?.city)
         setCurState(response.data.data?.state)
@@ -106,7 +112,10 @@ const Profile = () => {
       curZipcode.length === 0 ||
       curTel.length === 0 ||
       curPrivacy.length === 0 ||
-      curReport.length === 0
+      curReport.length === 0 ||
+      curGoldenBenefit.length === 0 ||
+      curSilverBenefit.length === 0 ||
+      curBronzeBenefit.length === 0
     ) {
       showWarningMsg('It looks like some of the information you entered is incorrect.')
     } else if (
@@ -128,8 +137,11 @@ const Profile = () => {
           curThirdTime: parseInt(curThirdTime),
           curFourthTime: parseInt(curFourthTime),
           curGolden: parseInt(curGolden),
+          curGoldenBenefit: curGoldenBenefit,
           curSilver: parseInt(curSilver),
+          curSilverBenefit: curSilverBenefit,
           curBronze: parseInt(curBronze),
+          curBronzeBenefit: curBronzeBenefit,
           curAddress: curAddress,
           curCity: curCity,
           curState: curState,
@@ -211,6 +223,13 @@ const Profile = () => {
               />
             </CCol>
             <CCol xs={12}>
+              <CFormLabel>Golden Benefit</CFormLabel>
+              <CFormTextarea
+                value={curGoldenBenefit}
+                onChange={(e) => setCurGoldenBenefit(e.target.value)}
+              />
+            </CCol>
+            <CCol xs={12}>
               <CFormLabel>Silver</CFormLabel>
               <CFormInput
                 placeholder="Silver"
@@ -220,12 +239,26 @@ const Profile = () => {
               />
             </CCol>
             <CCol xs={12}>
+              <CFormLabel>Silver Benefit</CFormLabel>
+              <CFormTextarea
+                value={curSilverBenefit}
+                onChange={(e) => setCurSilverBenefit(e.target.value)}
+              />
+            </CCol>
+            <CCol xs={12}>
               <CFormLabel>Bronze</CFormLabel>
               <CFormInput
                 placeholder="Bronze"
                 type="number"
                 value={curBronze}
                 onChange={(e) => setCurBronze(e.target.value)}
+              />
+            </CCol>
+            <CCol xs={12}>
+              <CFormLabel>Bronze Benefit</CFormLabel>
+              <CFormTextarea
+                value={curBronzeBenefit}
+                onChange={(e) => setCurBronzeBenefit(e.target.value)}
               />
             </CCol>
             <h4 className="px-2 pt-3 mb-0">Company Information</h4>
@@ -269,10 +302,10 @@ const Profile = () => {
                 onChange={(e) => setCurTel(e.target.value)}
               />
             </CCol>
-            <h4 className="px-2 pt-3 mb-0">Privacy Statement</h4>
+            <h4 className="px-2 pt-3 mb-0">Terms and Conditions</h4>
             <CCol>
               <CFormTextarea
-                placeholder="Privacy Statement"
+                placeholder="Terms and Conditions"
                 rows={3}
                 value={curPrivacy}
                 onChange={(e) => setCurPrivacy(e.target.value)}
