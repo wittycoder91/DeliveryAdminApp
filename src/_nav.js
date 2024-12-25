@@ -12,6 +12,7 @@ import {
   cilSatelite,
   cilSpreadsheet,
   cilStorage,
+  cilColorFill,
 } from '@coreui/icons'
 import { CNavItem, CNavTitle } from '@coreui/react'
 
@@ -89,6 +90,12 @@ const _nav = [
     name: 'FAQ',
     to: '/setting/faq',
     icon: <CIcon icon={cilApplications} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Unavailble Date',
+    to: '/setting/date',
+    icon: <CIcon icon={cilColorFill} customClassName="nav-icon" />,
   },
 ]
 

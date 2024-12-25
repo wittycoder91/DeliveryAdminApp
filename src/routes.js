@@ -19,6 +19,7 @@ const Residues = React.lazy(() => import('./views/settings/residue/Residues'))
 const Conditions = React.lazy(() => import('./views/settings/condition/Conditions'))
 const Setting = React.lazy(() => import('./views/settings/setting/Setting'))
 const FAQ = React.lazy(() => import('./views/settings/faq/FAQ'))
+const Date = React.lazy(() => import('./views/settings/date/Date'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -41,6 +42,7 @@ const routes = [
   { path: '/setting/condition', name: 'Industry', element: Conditions },
   { path: '/setting/setting', name: 'Setting', element: Setting },
   { path: '/setting/faq', name: 'FAQ', element: FAQ },
+  { path: '/setting/date', name: 'Date', element: Date },
 ]
 
 export default routes

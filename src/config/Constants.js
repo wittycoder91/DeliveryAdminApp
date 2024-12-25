@@ -5,6 +5,11 @@ export const API_URLS = {
   GETDASHBOARDDELIERY: `${process.env.REACT_APP_API_URL}/dashboard/admin/get-dashboard-delivery`,
   GETDASHBOARDWEIGHT: `${process.env.REACT_APP_API_URL}/dashboard/admin/get-dashboard-weight`,
   GETDASHBOARDLOYALTY: `${process.env.REACT_APP_API_URL}/dashboard/admin/get-dashboard-loyalty`,
+  // Date
+  GETDATE: `${process.env.REACT_APP_API_URL}/setting/admin/get-dates`,
+  ADDDATE: `${process.env.REACT_APP_API_URL}/setting/admin/add-date`,
+  EDITDATE: `${process.env.REACT_APP_API_URL}/setting/admin/edit-date`,
+  REMOVEDATE: `${process.env.REACT_APP_API_URL}/setting/admin/remove-date`,
   // Material
   GETMATERIAL: `${process.env.REACT_APP_API_URL}/setting/admin/get-materials`,
   ADDMATERIAL: `${process.env.REACT_APP_API_URL}/setting/admin/add-material`,
