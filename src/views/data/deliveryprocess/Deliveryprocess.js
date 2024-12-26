@@ -34,14 +34,14 @@ const Deliveryprocess = () => {
     'Supplier',
     'PO #',
     'Material',
+    'Color',
+    'Conditions',
     'Estimated Weight',
     'Packaging',
     'Estimated # of Packages ',
     'Residue Material',
-    'Color',
-    'Conditions',
     'Proposed Delivery Date',
-    'Time',
+    'Dock Time',
     'Status',
   ]
 
@@ -342,14 +342,14 @@ const Deliveryprocess = () => {
                         {row?.po > 0 ? row?.po : ''}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">{row?.materialName}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row?.colorName}</CTableDataCell>
+                      <CTableDataCell className="text-center">{row?.conditionName}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.weight}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.packageName}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.countpackage}</CTableDataCell>
                       <CTableDataCell className="text-center">
                         {row?.residueName === 'Other' ? row?.other : row?.residueName}
                       </CTableDataCell>
-                      <CTableDataCell className="text-center">{row?.colorName}</CTableDataCell>
-                      <CTableDataCell className="text-center">{row?.conditionName}</CTableDataCell>
                       <CTableDataCell className="text-center">{row?.date}</CTableDataCell>
                       <CTableDataCell className="text-center">
                         {new Date(row?.time * 1000).toISOString().substr(11, 8)}
