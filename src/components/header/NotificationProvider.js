@@ -43,7 +43,8 @@ const NotificationProvider = ({ children }) => {
     let retryAttempts = 0
 
     const connect = () => {
-      socket = new WebSocket('ws://localhost:7000')
+      // socket = new WebSocket('ws://135.181.241.84:7000')
+      socket = new WebSocket(`${process.env.REACT_APP_WEBSOCKET_URL}`)
 
       socket.onopen = () => {
         console.log('WebSocket connection established')
