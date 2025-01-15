@@ -23,14 +23,14 @@ const Dashboard = () => {
       },
     ],
   })
-  const [loyaltyData, setLoyaltyData] = useState([0, 0, 0, 0])
+  // const [loyaltyData, setLoyaltyData] = useState([0, 0, 0, 0])
   const [selectedDeliveryOption, setSelectedDeliveryOption] = useState('year')
   const [selectedWeightOption, setSelectedWeightOption] = useState('year')
 
   useEffect(() => {
     getDeliveryData('year')
     getWeightData('year')
-    getLoyaltyData()
+    // getLoyaltyData()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -92,31 +92,31 @@ const Dashboard = () => {
       }
     }
   }
-  const getLoyaltyData = async () => {
-    try {
-      const response = await api.get(API_URLS.GETDASHBOARDLOYALTY)
+  // const getLoyaltyData = async () => {
+  //   try {
+  //     const response = await api.get(API_URLS.GETDASHBOARDLOYALTY)
 
-      if (response.data.success && response.data.data) {
-        if (response.data.success) {
-          const data = [
-            response.data.data['0'] || 0,
-            response.data.data['1'] || 0,
-            response.data.data['2'] || 0,
-            response.data.data['3'] || 0,
-          ]
-          setLoyaltyData(data)
-        }
-      } else {
-        showWarningMsg(response.data.message)
-      }
-    } catch (error) {
-      if (error.response?.data?.msg) {
-        showErrorMsg(error.response.data.msg)
-      } else {
-        showErrorMsg(error.message)
-      }
-    }
-  }
+  //     if (response.data.success && response.data.data) {
+  //       if (response.data.success) {
+  //         const data = [
+  //           response.data.data['0'] || 0,
+  //           response.data.data['1'] || 0,
+  //           response.data.data['2'] || 0,
+  //           response.data.data['3'] || 0,
+  //         ]
+  //         setLoyaltyData(data)
+  //       }
+  //     } else {
+  //       showWarningMsg(response.data.message)
+  //     }
+  //   } catch (error) {
+  //     if (error.response?.data?.msg) {
+  //       showErrorMsg(error.response.data.msg)
+  //     } else {
+  //       showErrorMsg(error.message)
+  //     }
+  //   }
+  // }
 
   const handleDeliveryOptions = (event) => {
     const selectedValue = event.target.value
@@ -223,7 +223,7 @@ const Dashboard = () => {
           </CCard>
         </CCol>
         {/* Loyalty Chart */}
-        <CCol md={6}>
+        {/* <CCol md={6}>
           <CCard className="mb-4">
             <h3 className="px-4 pt-3">Loyalty Chart</h3>
             <CCardBody>
@@ -241,7 +241,7 @@ const Dashboard = () => {
               />
             </CCardBody>
           </CCard>
-        </CCol>
+        </CCol> */}
       </CRow>
     </CCol>
   )
