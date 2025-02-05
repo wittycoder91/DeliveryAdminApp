@@ -144,7 +144,7 @@ const Color = () => {
     setVisible(!visible)
   }
   const handleAddColor = async () => {
-    if (curColorName.length === 0 || curColorDesc.length === 0) {
+    if (curColorName.length === 0) {
       showErrorMsg('Please enter the Color name or description')
     } else {
       var apiURL = ''
