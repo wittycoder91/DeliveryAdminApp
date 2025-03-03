@@ -7,14 +7,13 @@ import {
   CFormLabel,
   CFormTextarea,
   CRow,
-  CCarousel,
-  CCarouselItem,
-  CImage,
   CButton,
 } from '@coreui/react'
 import { useParams } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import 'react-responsive-carousel/lib/styles/carousel.min.css'
+import { Carousel } from 'react-responsive-carousel'
 
 import api from 'src/services'
 import { API_URLS } from 'src/config/Constants'
@@ -32,10 +31,11 @@ const DeliverylogDetail = () => {
   const [curResidue, setCurResidue] = useState('')
   const [curColor, setCurColor] = useState('')
   const [curCondition, setCurCondition] = useState('')
-  const [curDeliveryPreview, setCurDeliveryPreview] = useState('')
+  const [curImageUrl, setCurImageUrl] = useState([])
   const [curDate, setCurDate] = useState('')
   const [curTime, setCurTime] = useState('')
   const [curPO, setCurPO] = useState('')
+  const [curNote, setCurNote] = useState('')
   const [curStatus, setCurStatus] = useState(-1)
   const [curFeedback, setCurFeedback] = useState('')
   const [curTareWeight, setCurTareWeight] = useState('')
@@ -43,7 +43,7 @@ const DeliverylogDetail = () => {
   const [curQuality, setCurQuality] = useState('')
   const [curInspection, setCurInspection] = useState('')
   const [curSDS, setCurSDS] = useState('')
-  const [curFeebackImage, setCurFeebackImage] = useState('')
+  const [curFeebackImage, setCurFeebackImage] = useState([])
   const [curRejectImages, setCurRejectImages] = useState([])
 
   useEffect(() => {
@@ -70,7 +70,10 @@ const DeliverylogDetail = () => {
         setCurCountPackage(response.data.data?.countpackage)
         setCurColor(response.data.data?.color)
         setCurCondition(response.data.data?.condition)
-        setCurDeliveryPreview(response.data.data?.avatarPath)
+        const updatedAvatarPaths = response.data.data?.avatarPath.map((path) =>
+          path.replace(/\\/g, '/'),
+        )
+        setCurImageUrl(updatedAvatarPaths)
         setCurDate(response.data.data?.date)
         setCurTime(new Date(response.data.data?.time * 1000).toISOString().substr(11, 8))
         setCurPO(response.data.data?.po)
@@ -81,15 +84,17 @@ const DeliverylogDetail = () => {
         setCurQuality(response.data.data?.quality)
         setCurInspection(response.data.data?.insepction)
         setCurSDS(response.data.data?.sdsPath)
+        setCurNote(response.data.data?.note)
         if (response.data.data?.residue === 'Other') {
           setCurResidue(response.data.data?.other)
         } else {
           setCurResidue(response.data.data?.residue)
         }
         if (response.data.data?.feedbackImage) {
-          const rawAvatarPath = response.data.data?.feedbackImage
-          const normalizedAvatarPath = rawAvatarPath.replace(/\\/g, '/')
-          setCurFeebackImage(normalizedAvatarPath)
+          const updatedFeedImages = response.data.data?.feedbackImage.map((path) =>
+            path.replace(/\\/g, '/'),
+          )
+          setCurFeebackImage(updatedFeedImages)
         }
         if (response.data.data?.rejectImages && response.data.data?.rejectImages?.length > 0) {
           let tempRejectImages = []
@@ -121,10 +126,11 @@ const DeliverylogDetail = () => {
     setCurResidue('')
     setCurColor('')
     setCurCondition('')
-    setCurDeliveryPreview('')
+    setCurImageUrl([])
     setCurDate('')
     setCurTime('')
     setCurPO('')
+    setCurNote('')
     setCurStatus(-1)
     setCurFeedback('')
     setCurTareWeight('')
@@ -132,7 +138,7 @@ const DeliverylogDetail = () => {
     setCurQuality('')
     setCurInspection('')
     setCurFeedback('')
-    setCurFeebackImage('')
+    setCurFeebackImage([])
     setCurRejectImages([])
     setCurSDS('')
   }
@@ -227,6 +233,12 @@ const DeliverylogDetail = () => {
                 <CFormInput value={curPO > 0 ? curPO : ''} readOnly />
               </CCol>
             </CCol>
+            <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
+              <CCol>
+                <CFormLabel>Note</CFormLabel>
+                <CFormTextarea rows={3} value={curNote} readOnly />
+              </CCol>
+            </CCol>
             {curStatus === 3 && (
               <>
                 <CCol className="d-flex flex-wrap flex-md-row flex-column gap-4">
@@ -255,51 +267,61 @@ const DeliverylogDetail = () => {
               <CFormLabel>Feedback</CFormLabel>
               <CFormTextarea value={curFeedback} readOnly />
             </CCol>
-            <CCol className="d-flex align-items-center justify-content-center flex-wrap flex-md-row flex-column gap-4">
-              {curDeliveryPreview && (
-                <div className="text-center">
-                  <p className="text-body-secondary">Delivery Uploaded Image:</p>
-                  <img
-                    src={`${process.env.REACT_APP_UPLOAD_URL}${curDeliveryPreview}`}
-                    alt="Delivery"
-                    style={{ maxWidth: '100%', maxHeight: '150px', borderRadius: '5px' }}
-                  />
-                </div>
-              )}
-              {curFeebackImage && (
-                <div className="text-center">
-                  <p className="text-body-secondary">Delivery Feedback Image:</p>
-                  <img
-                    src={`${process.env.REACT_APP_UPLOAD_URL}${curFeebackImage}`}
-                    alt="Delivery"
-                    style={{ maxWidth: '100%', maxHeight: '150px', borderRadius: '5px' }}
-                  />
-                </div>
-              )}
-            </CCol>
-            {curRejectImages.length > 0 && (
-              <CCol className="mb-4">
-                <div className="text-center">
-                  <p className="text-body-secondary m-0 mb-2">Delivery Reject Feedback Image:</p>
-                  <CCarousel controls indicators dark>
-                    {curRejectImages.map((image, index) => (
-                      <CCarouselItem key={index}>
-                        <CImage
-                          className="d-block w-100 image-slider"
-                          src={`${process.env.REACT_APP_UPLOAD_URL}${image}`}
-                          alt={`Uploaded slide ${index + 1}`}
-                        />
-                      </CCarouselItem>
-                    ))}
-                  </CCarousel>
-                </div>
-              </CCol>
-            )}
             {curSDS.length > 0 && (
-              <CCol className="d-flex justify-content-end gap-3 me-4">
+              <CCol className="d-flex justify-content-start gap-3 me-4">
+                <CFormLabel className="text-center">SDS: </CFormLabel>
                 <CButton color="primary" className="wid-110" onClick={handleDownload}>
                   Download
                 </CButton>
+              </CCol>
+            )}
+            <CCol className="d-flex align-items-center justify-content-center flex-wrap flex-column gap-1">
+              <CFormLabel className="text-center">Material Photo Upload</CFormLabel>
+              <Carousel showThumbs={false} className="w-100">
+                {curImageUrl.length > 0 &&
+                  curImageUrl.map((image, index) => (
+                    <div key={index} className="position-relative">
+                      <img
+                        src={`${process.env.REACT_APP_UPLOAD_URL}${image}`}
+                        style={{ height: '300px', objectFit: 'contain' }}
+                        alt=""
+                      />
+                    </div>
+                  ))}
+              </Carousel>
+            </CCol>
+            {curFeebackImage && (
+              <CCol className="d-flex align-items-center justify-content-center flex-wrap flex-column gap-1">
+                <p className="text-body-secondary">Delivery Feedback Image:</p>
+                <Carousel showThumbs={false} className="w-100">
+                  {curFeebackImage.length > 0 &&
+                    curFeebackImage.map((image, index) => (
+                      <div key={index} className="position-relative">
+                        <img
+                          src={`${process.env.REACT_APP_UPLOAD_URL}${image}`}
+                          style={{ height: '300px', objectFit: 'contain' }}
+                          alt=""
+                        />
+                      </div>
+                    ))}
+                </Carousel>
+              </CCol>
+            )}
+            {curRejectImages.length > 0 && (
+              <CCol className="mb-4 text-center">
+                <p className="text-body-secondary m-0 mb-2">Delivery Reject Feedback Image:</p>
+                <Carousel showThumbs={false} className="w-100">
+                  {curRejectImages.length > 0 &&
+                    curRejectImages.map((image, index) => (
+                      <div key={index} className="position-relative">
+                        <img
+                          src={`${process.env.REACT_APP_UPLOAD_URL}${image}`}
+                          style={{ height: '300px', objectFit: 'contain' }}
+                          alt=""
+                        />
+                      </div>
+                    ))}
+                </Carousel>
               </CCol>
             )}
           </CCardBody>
