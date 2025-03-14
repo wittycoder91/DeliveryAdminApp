@@ -709,26 +709,29 @@ const DeliveryprocessDetail = () => {
                 />
               </CCol>
               <CCol>
-                <CFormLabel>Upload copy of BOL, scale tickets and material photos</CFormLabel>
+                <CFormLabel>Delivery Feedback</CFormLabel>
                 <CFormTextarea
                   rows={3}
                   value={curDeliveryFeedback}
                   onChange={(e) => setDeliveryFeedback(e.target.value)}
                 />
               </CCol>
-              <CInputGroup className="">
-                <CInputGroupText>
-                  <CIcon icon={cilImage} />
-                </CInputGroupText>
-                <CFormInput
-                  type="file"
-                  placeholder="Upload Delivery Feedback Images "
-                  accept="image/*"
-                  multiple
-                  onChange={handleDeliveryImageChange}
-                  required
-                />
-              </CInputGroup>
+              <CCol>
+                <CFormLabel>Upload copy of BOL, scale tickets and material photos</CFormLabel>
+                <CInputGroup className="">
+                  <CInputGroupText>
+                    <CIcon icon={cilImage} />
+                  </CInputGroupText>
+                  <CFormInput
+                    type="file"
+                    placeholder="Upload Delivery Feedback Images "
+                    accept="image/*"
+                    multiple
+                    onChange={handleDeliveryImageChange}
+                    required
+                  />
+                </CInputGroup>
+              </CCol>
               <Carousel
                 showThumbs={false}
                 selectedItem={Math.min(activeAcceptIndex, uploadedAcceptImages.length - 1)}
