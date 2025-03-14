@@ -36,6 +36,7 @@ const Profile = () => {
   const [curState, setCurState] = useState('')
   const [curZipcode, setCurZipcode] = useState('')
   const [curTel, setCurTel] = useState('')
+  const [curEmail, setCurEmail] = useState('')
   // Privacy Satement
   const [curPrivacy, setCurPrivacy] = useState('')
   // Report
@@ -69,6 +70,7 @@ const Profile = () => {
         setCurTel(response.data.data?.telephone)
         setCurPrivacy(response.data.data?.terms)
         setCurReport(response.data.data?.report)
+        setCurEmail(response.data.data?.emailaddress)
       } else {
         showWarningMsg(response.data.message)
       }
@@ -111,13 +113,14 @@ const Profile = () => {
       curState.length === 0 ||
       curZipcode.length === 0 ||
       curTel.length === 0 ||
+      curEmail.length === 0 ||
       curPrivacy.length === 0 ||
       curReport.length === 0 ||
       curGoldenBenefit.length === 0 ||
       curSilverBenefit.length === 0 ||
       curBronzeBenefit.length === 0
     ) {
-      showWarningMsg('It looks like some of the information you entered is incorrect.')
+      showWarningMsg('It looks like some of the information you entered is empty.')
     } else if (
       curFirstTime > curSecondTime ||
       curSecondTime > curThirdTime ||
@@ -147,6 +150,7 @@ const Profile = () => {
           curState: curState,
           curZipcode: curZipcode,
           curTel: curTel,
+          curEmail: curEmail,
           curPrivacy: curPrivacy,
           curReport: curReport,
         })
@@ -262,6 +266,14 @@ const Profile = () => {
               />
             </CCol>
             <h4 className="px-2 pt-3 mb-0">Company Information</h4>
+            <CCol xs={12}>
+              <CFormLabel>Email Address</CFormLabel>
+              <CFormInput
+                placeholder="Email Address"
+                value={curEmail}
+                onChange={(e) => setCurEmail(e.target.value)}
+              />
+            </CCol>
             <CCol xs={6}>
               <CFormLabel>Address</CFormLabel>
               <CFormInput
