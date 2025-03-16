@@ -365,7 +365,6 @@ const DeliveryprocessDetail = () => {
     }
     setValidated(true)
 
-    console.log(uploadedAcceptImages)
     if (uploadedAcceptImages.length === 0) return
 
     const formData = new FormData()
@@ -381,6 +380,7 @@ const DeliveryprocessDetail = () => {
     formData.append('package', curDeliveryPackaging)
     formData.append('insepction', curDeliveryInspection)
     formData.append('feedback', curDeliveryFeedback)
+
     try {
       const response = await api.post(API_URLS.ADDFEEDBACKDELIVERY, formData, {
         headers: {
@@ -763,7 +763,7 @@ const DeliveryprocessDetail = () => {
                 Close
               </CButton>
               <CButton color="primary" type="submit">
-                Save changes
+                Accept
               </CButton>
             </CModalFooter>
           </CForm>
